@@ -12,7 +12,7 @@ SRC_URI="
 	x86? ( http://spflashtool.com/download/SP_Flash_Tool_Linux_32Bit_v${PV}.zip )
 	amd64? ( http://spflashtool.com/download/SP_Flash_Tool_exe_Linux_64Bit_v${PV}.zip )"
 
-LICENSE=""
+LICENSE="public-domain"
 SLOT="0"
 KEYWORDS="~amd64"
 IUSE="+udev-rules +system-qt"
@@ -58,7 +58,7 @@ src_install() {
 	insopts -m 0644
 	doins -r *
 	fperms 755 ${dest}/flash_tool ${dest}/libflashtool.so ${dest}/bin/assistant plugins/*/*.so
-	newbin ${FILESDIR}/launcher.sh spflashtool
+	newbin "${FILESDIR}/launcher.sh" spflashtool
 }
 
 pkg_postinst(){
