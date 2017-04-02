@@ -1,20 +1,21 @@
 # Welcome to the Bentoo!
-=================================================================================================
 
-_Packages done right™_
+## Repoman status
 
 [![Build Status][ci-master-badge]][ci-master]
 
-Mirrors
-------------------
+## Contact
+
+[![Gitter chat][gitter-badge]][gitter]
+
+## Mirrors
 
 The overlay is hosted on BitBucket and on Github at:
 
 - https://bitbucket.org/redeyeteam/bentoo
 - https://github.com/redeyeteam/bentoo
 
-Quality Assurance
-------------------
+## Quality Assurance
 
 You should be able to use any package from my overlay without regrets, because I do and I have quite high standards.
 To achieve this goal I'm using several safety guards:
@@ -29,38 +30,10 @@ To achieve this goal I'm using several safety guards:
 This all, of course, doesn't prevent build failures, missing dependencies, etc. So, should you find
 some issues, please send me a PR (if you know how to fix it), or at least [file an issue][New issue].
 
-How to install this overlay
-----------------------------
-
-### Manually (recommended)
-
-#### 1. Add an entry to [`/etc/portage/repos.conf`](https://wiki.gentoo.org/wiki//etc/portage/repos.conf):
-
-```ini
-[bentoo]
-## set this to any location you want
-location = /var/cache/portage/repos/bentoo
-## github-mirror
-sync-uri =  https://github.com/redeyeteam/bentoo.git
-## otherwise use the one and only original source
-#sync-uri = https://bitbucket.org/redeyeteam/bentoo.git
-sync-type = git
-auto-sync = yes
-## prefer my packages over the Gentoo™ ones to improve UX and stability (recommended by 9/10 IT experts)
-#priority = 9999
-```
-
-#### 2. Sync
-
-```sh
-# Preferrably
-eix-sync
-# or if you need to
-emerge --sync
-```
-
 ---
 
 [protected branches]: https://help.github.com/articles/about-protected-branches/
 [ci-master-badge]: https://travis-ci.org/redeyeteam/bentoo.svg?branch=master
 [ci-master]: https://travis-ci.org/redeyeteam/bentoo
+[gitter-badge]: https://badges.gitter.im/redeyeteam/bentoo.png
+[gitter]: https://gitter.im/redeyeteam/bentoo
