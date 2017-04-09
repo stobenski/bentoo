@@ -1,4 +1,4 @@
-# Copyright 1999-2016 The Bentoo Authors. All rights reserved.
+# Copyright 1999-2017 The Bentoo Authors. All rights reserved.
 # Distributed under the terms of the GNU General Public License v3 or later
 # $Id$
 
@@ -28,19 +28,13 @@ S="${WORKDIR}/${MY_P}"
 
 PATCHES=(
 	"${FILESDIR}/${PN}-ncursesprivate.patch"
-	"${FILESDIR}/doc__Makefile.in.patch"
-	"${FILESDIR}/src__Makefile.in.patch"
-	"${FILESDIR}/src__sys.h.patch"
-	"${FILESDIR}/wcsdup.patch"
-	"${FILESDIR}/configure.patch"
-	"${FILESDIR}/patch-non_ascii.diff"
 	)
 
 multilib_src_configure() {
 	ECONF_SOURCE="${S}" econf \
 		$(use_enable examples) \
 		$(use_enable static-libs static) \
-		--enable-widec \
+		--mandir=${EROOT}/usr/share/libedit \
 		--enable-fast-install
 }
 
