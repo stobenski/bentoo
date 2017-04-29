@@ -39,7 +39,7 @@ RUBY_TARGETS="ruby20 ruby21"
 
 USE="${USE} X abi_x86_32 adns caps curl lm_sensors lua lzma perl pulseaudio python sqlite xattr xinerama"
 
-PORTAGE_BZIP2_COMMAND="lbzip2"
+#PORTAGE_BZIP2_COMMAND="lbzip2"
 
 #mgorny suggested this speeds up sync, in my testing it makes a rather large difference
 PORTAGE_RSYNC_EXTRA_OPTS="--omit-dir-times"
