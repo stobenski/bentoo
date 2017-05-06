@@ -33,6 +33,7 @@ PDEPEND="
 		www-plugins/showip
 		www-plugins/show-password-field
 		www-plugins/status-4-evar
+		www-plugins/stylish
 		www-plugins/tree-style-tab
 		www-plugins/ublock-origin
 		www-plugins/visual-hashing
