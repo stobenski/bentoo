@@ -17,6 +17,7 @@ IUSE=""
 
 DEPEND="sys-devel/autoconf:2.63"
 RDEPEND="
+	app-crypt/gpgme
 	dev-libs/glib
 	dev-libs/nss
 	dev-libs/glib:2
