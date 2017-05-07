@@ -115,6 +115,7 @@ RDEPEND="
 	xpm? ( x11-libs/libXpm )
 
 	svg? ( gnome-base/librsvg )
+	app-text/poppler
 	sys-apps/dbus
 	>=sys-apps/util-linux-2.20.0
 	sys-libs/zlib
