@@ -2,132 +2,145 @@
 # Distributed under the terms of the GNU General Public License v3 or later
 # $Id$
 
-EAPI=5
+EAPI="6"
 
-case "${PV}" in
-	(*9999*)
-	KEYWORDS=""
-	VCS_ECLASS=git-2
-	EGIT_REPO_URI="git://git.enlightenment.org/core/${PN}.git"
-	EGIT_PROJECT="${PN}.git"
-	case "${PV}" in
-		(*.9999*) EGIT_BRANCH="${PN}-${PV:0:4}";;
-	esac
-	AUTOTOOLS_AUTORECONF=1
-	;;
-	(*)
+MY_P=${P/_/-}
+
+if [[ "${PV}" == "9999" ]] ; then
+	EGIT_SUB_PROJECT="core"
+	EGIT_URI_APPEND="${PN}"
 	KEYWORDS="~amd64 ~arm ~x86"
-	SRC_URI="https://download.enlightenment.org/rel/libs/${PN}/${P/_/-}.tar.xz"
-	S="${WORKDIR}/${P/_/-}"
-	;;
-esac
-inherit autotools-multilib ${VCS_ECLASS}
+elif [[ *"${PV}" == *"_pre"* ]] ; then
+	MY_P=${P%%_*}
+	SRC_URI="https://download.enlightenment.org/pre-releases/${MY_P}.tar.xz"
+	EKEY_STATE="snap"
+	KEYWORDS="~amd64 ~arm ~x86"
+else
+	SRC_URI="https://download.enlightenment.org/rel/libs/${PN}/${MY_P}.tar.xz"
+	EKEY_STATE="release"
+	KEYWORDS="amd64 arm x86"
+fi
 
-RESTRICT="test"
+inherit enlightenment pax-utils
 
-DESCRIPTION="Enlightenment Foundation Core Libraries"
-HOMEPAGE="http://www.enlightenment.org/"
+DESCRIPTION="Enlightenment Foundation Libraries all-in-one package"
+LICENSE="BSD-2 GPL-2 LGPL-2.1 ZLIB"
+IUSE="+bmp debug drm +eet egl fbcon +fontconfig fribidi gif gles glib gnutls gstreamer harfbuzz +ico ibus jpeg2k libressl neon oldlua opengl ssl physics pixman +png +ppm postscript +psd pulseaudio rawphoto scim sdl sound +svg systemd tga tiff tslib v4l valgrind wayland webp X xim xine xpm"
 
-LICENSE="BSD-2 FTL GPL-2 LGPL-2.1 ZLIB"
-SLOT="0/${PV:0:4}"
-
-IUSE="+X avahi +bmp cpu_flags_arm_neon cxx-bindings debug doc drm +eet +egl fbcon
-+fontconfig +fribidi gif gles glib gnutls gstreamer harfbuzz ibus +ico jpeg2k libuv
-+nls +opengl raw ssl svg pdf +postscript physics pixman +png +ppm +psd  pulseaudio
-scim sdl sndfile static-libs systemd system-lz4 test +tga tiff tslib v4l2 wayland
-webp xim xine xpm"
 REQUIRED_USE="
-	?? ( gnutls ssl )
-	?? ( opengl gles )
-	?? ( glib libuv )
-	drm? ( systemd )
-	gles? ( !sdl egl )
-	gles? ( || ( X wayland ) )
-	opengl? ( !egl )
-	pulseaudio? ( sndfile )
-	sdl? ( !gles opengl )
-	xim? ( X )
-	wayland? ( egl !opengl gles )
+	pulseaudio?	( sound )
+	opengl?		( || ( X sdl wayland ) )
+	gles?		( || ( X wayland ) )
+	gles?		( !sdl )
+	gles?		( egl )
+	sdl?		( opengl )
+	wayland?	( egl !opengl gles )
+	xim?		( X )
 "
 
-COMMON_DEP="
-	dev-lang/luajit:2
-	sys-apps/dbus[${MULTILIB_USEDEP}]
-	sys-libs/zlib[${MULTILIB_USEDEP}]
-	virtual/jpeg[${MULTILIB_USEDEP}]
-	virtual/udev
-	X? (
-		x11-libs/libX11[${MULTILIB_USEDEP}]
-		x11-libs/libXScrnSaver[${MULTILIB_USEDEP}]
-		x11-libs/libXcomposite[${MULTILIB_USEDEP}]
-		x11-libs/libXcursor[${MULTILIB_USEDEP}]
-		x11-libs/libXdamage[${MULTILIB_USEDEP}]
-		x11-libs/libXext[${MULTILIB_USEDEP}]
-		x11-libs/libXfixes[${MULTILIB_USEDEP}]
-		x11-libs/libXinerama[${MULTILIB_USEDEP}]
-		x11-libs/libXp[${MULTILIB_USEDEP}]
-		x11-libs/libXrandr[${MULTILIB_USEDEP}]
-		x11-libs/libXrender[${MULTILIB_USEDEP}]
-		x11-libs/libXtst[${MULTILIB_USEDEP}]
-		gles? (
-			media-libs/mesa[egl,gles2,${MULTILIB_USEDEP}]
-			x11-libs/libXrender[${MULTILIB_USEDEP}]
-		)
-		opengl? (
-			virtual/opengl[${MULTILIB_USEDEP}]
-			x11-libs/libXrender[${MULTILIB_USEDEP}]
+RDEPEND="
+	drm? (
+		>=dev-libs/libinput-0.8
+		media-libs/mesa[gbm]
+		>=x11-libs/libdrm-2.4
+		>=x11-libs/libxkbcommon-0.6.0
+	)
+	fontconfig? ( media-libs/fontconfig )
+	fribidi? ( dev-libs/fribidi )
+	gif? ( media-libs/giflib )
+	glib? ( dev-libs/glib:2 )
+	gnutls? ( net-libs/gnutls )
+	!gnutls? (
+		ssl? (
+			!libressl? ( dev-libs/openssl:0= )
+			libressl? ( dev-libs/libressl )
 		)
 	)
-	avahi? ( net-dns/avahi[${MULTILIB_USEDEP}] )
-	debug? ( dev-util/valgrind )
-	drm? ( x11-libs/libdrm[${MULTILIB_USEDEP}]
-		x11-libs/libxkbcommon[${MULTILIB_USEDEP}]
-		media-libs/mesa[gbm,${MULTILIB_USEDEP}]
-		dev-libs/libinput
-	)
-	fontconfig? ( media-libs/fontconfig[${MULTILIB_USEDEP}] )
-	fribidi? ( dev-libs/fribidi[${MULTILIB_USEDEP}] )
-	gif? ( media-libs/giflib[${MULTILIB_USEDEP}] )
-	glib? ( dev-libs/glib[${MULTILIB_USEDEP}] )
-	gnutls? ( net-libs/gnutls[${MULTILIB_USEDEP}] )
-	ssl? ( || ( dev-libs/libressl[${MULTILIB_USEDEP}]
-		dev-libs/openssl[${MULTILIB_USEDEP}] ) )
-	svg? ( gnome-base/librsvg[${MULTILIB_USEDEP}] )
 	gstreamer? (
-		media-libs/gstreamer:1.0[${MULTILIB_USEDEP}]
-		media-libs/gst-plugins-base:1.0[${MULTILIB_USEDEP}]
+		media-libs/gstreamer:1.0
+		media-libs/gst-plugins-base:1.0
 	)
-	harfbuzz? ( media-libs/harfbuzz[${MULTILIB_USEDEP}] )
+	harfbuzz? ( media-libs/harfbuzz )
 	ibus? ( app-i18n/ibus )
-	jpeg2k? ( media-libs/openjpeg[${MULTILIB_USEDEP}] )
-	libuv? ( dev-libs/libuv[${MULTILIB_USEDEP}] )
-	nls? ( virtual/libintl[${MULTILIB_USEDEP}] )
-	pdf? ( app-text/poppler[cxx,jpeg,jpeg2k?] )
-	postscript? ( app-text/libspectre )
-	pixman? ( x11-libs/pixman[${MULTILIB_USEDEP}] )
-	physics? ( sci-physics/bullet )
-	png? ( media-libs/libpng:0=[${MULTILIB_USEDEP}] )
-	pulseaudio? ( media-sound/pulseaudio[${MULTILIB_USEDEP}] )
-	sndfile? ( media-libs/libsndfile[${MULTILIB_USEDEP}] )
-	raw? ( media-libs/libraw[${MULTILIB_USEDEP}] )
-	scim?	( app-i18n/scim )
+	jpeg2k? ( media-libs/openjpeg:0 )
+	!oldlua? ( >=dev-lang/luajit-2.0.0 )
+	oldlua? ( dev-lang/lua:* )
+	physics? ( >=sci-physics/bullet-2.80 )
+	pixman? ( x11-libs/pixman )
+	png? ( media-libs/libpng:0= )
+	postscript? ( app-text/libspectre:* )
+	pulseaudio? ( media-sound/pulseaudio )
+	rawphoto? ( media-libs/libraw:* )
+	scim? ( app-i18n/scim )
 	sdl? (
-		>=media-libs/libsdl2-2.0.0:0[opengl?,gles?,${MULTILIB_USEDEP}]
+		media-libs/libsdl2
+		virtual/opengl
 	)
-	systemd? ( sys-apps/systemd[${MULTILIB_USEDEP}] )
-	system-lz4? ( >=app-arch/lz4-0_p120[${MULTILIB_USEDEP}] )
-	tiff? ( media-libs/tiff:0[${MULTILIB_USEDEP}] )
-	tslib? ( x11-libs/tslib[${MULTILIB_USEDEP}] )
+	sound? ( media-libs/libsndfile )
+	systemd? ( sys-apps/systemd )
+	tiff? ( media-libs/tiff:0= )
+	tslib? ( x11-libs/tslib )
+	valgrind? ( dev-util/valgrind )
 	wayland? (
-		>=dev-libs/wayland-1.3.0:0[${MULTILIB_USEDEP}]
-		>=x11-libs/libxkbcommon-0.3.1[${MULTILIB_USEDEP}]
-		egl? ( media-libs/mesa[egl,gles2,${MULTILIB_USEDEP}] )
+		>=dev-libs/wayland-1.11.0
+		>=x11-libs/libxkbcommon-0.6.0
+		media-libs/mesa[gles2,wayland]
 	)
-	webp? ( media-libs/libwebp[${MULTILIB_USEDEP}] )
-	xine? ( >=media-libs/xine-lib-1.1.1[${MULTILIB_USEDEP}] )
-	xpm? ( x11-libs/libXpm[${MULTILIB_USEDEP}] )"
-RDEPEND="${COMMON_DEP}"
-DEPEND="${COMMON_DEP}
+	webp? ( media-libs/libwebp )
+	X? (
+		x11-libs/libXcursor
+		x11-libs/libX11
+		x11-libs/libXcomposite
+		x11-libs/libXdamage
+		x11-libs/libXext
+		x11-libs/libXfixes
+		x11-libs/libXinerama
+		x11-libs/libXp
+		x11-libs/libXrandr
+		x11-libs/libXrender
+		x11-libs/libXtst
+		x11-libs/libXScrnSaver
+
+		opengl? (
+			x11-libs/libXrender
+			virtual/opengl
+		)
+
+		gles? (
+			x11-libs/libXrender
+			virtual/opengl
+		)
+	)
+	xine? ( >=media-libs/xine-lib-1.1.1 )
+	xpm? ( x11-libs/libXpm )
+
+	svg? ( gnome-base/librsvg )
+	sys-apps/dbus
+	>=sys-apps/util-linux-2.20.0
+	sys-libs/zlib
+	virtual/jpeg:0=
+
+	!dev-libs/ecore
+	!dev-libs/edbus
+	!dev-libs/eet
+	!dev-libs/eeze
+	!dev-libs/efreet
+	!dev-libs/eina
+	!dev-libs/eio
+	!dev-libs/embryo
+	!dev-libs/eobj
+	!dev-libs/ephysics
+	!media-libs/edje
+	!media-libs/emotion
+	!media-libs/ethumb
+	!media-libs/evas
+"
+#external lz4 support currently broken because of unstable ABI/API
+#	app-arch/lz4
+
+#soft blockers added above for binpkg users
+#hard blocks are needed for building
+CORE_EFL_CONFLICTS="
 	!!dev-libs/ecore
 	!!dev-libs/edbus
 	!!dev-libs/eet
@@ -142,61 +155,69 @@ DEPEND="${COMMON_DEP}
 	!!media-libs/emotion
 	!!media-libs/ethumb
 	!!media-libs/evas
-	!!media-libs/elementary
-	app-arch/xz-utils
+"
+
+DEPEND="
+	${CORE_EFL_CONFLICTS}
+
+	${RDEPEND}
 	doc? ( app-doc/doxygen )
-	test? ( dev-libs/check[${MULTILIB_USEDEP}] )"
+"
 
-DOCS=( AUTHORS COMPLIANCE COPYING ChangeLog NEWS README )
+S=${WORKDIR}/${MY_P}
 
-multilib_src_configure()
-{
-	local -a myeconfargs=( ${EXTRA_EFL_CONF} )
+src_prepare() {
+    eapply_user
+	enlightenment_src_prepare
 
-	use opengl && use drm && myeconfargs+=( --enable-gl-drm )
-	use gles && use fbcon && myeconfargs+=( --enable-eglfs )
-	myeconfargs+=(
-		$(use_enable avahi)
-		$(use_enable cpu_flags_arm_neon neon)
-		$(use_enable cxx-bindings cxx-bindings)
-		$(use_enable doc)
+	# Remove stupid sleep command.
+	# Also back out gnu make hack that causes regen of Makefiles.
+	# Delete var setting that causes the build to abort.
+	sed -i \
+		-e '/sleep 10/d' \
+		-e '/^#### Work around bug in automake check macro$/,/^#### Info$/d' \
+		-e '/BARF_OK=/s:=.*:=:' \
+		configure || die
+}
+
+src_configure() {
+	if use ssl && use gnutls ; then
+		einfo "You enabled both USE=ssl and USE=gnutls, but only one can be used;"
+		einfo "gnutls has been selected for you."
+	fi
+	if use opengl && use gles ; then
+		einfo "You enabled both USE=opengl and USE=gles, but only one can be used;"
+		einfo "opengl has been selected for you."
+	fi
+
+	E_ECONF=(
+		--with-profile=$(usex debug debug release)
+		--with-crypto=$(usex gnutls gnutls $(usex ssl openssl none))
+		--with-x11=$(usex X xlib none)
+		$(use_with X x)
+		--with-opengl=$(usex opengl full $(usex gles es none))
+		--with-glib=$(usex glib)
+		--enable-i-really-know-what-i-am-doing-and-that-this-will-probably-break-things-and-i-will-fix-them-myself-and-send-patches-abb
+
+		$(use_enable bmp image-loader-bmp)
+		$(use_enable bmp image-loader-wbmp)
 		$(use_enable drm)
+		$(use_enable doc)
+		$(use_enable eet image-loader-eet)
 		$(use_enable egl)
 		$(use_enable fbcon fb)
 		$(use_enable fontconfig)
 		$(use_enable fribidi)
+		$(use_enable gif image-loader-gif)
 		$(use_enable gstreamer gstreamer1)
 		$(use_enable harfbuzz)
-		$(use_enable ibus)
-		$(use_enable libuv)
-		$(use_enable nls)
-		$(use_enable pdf poppler)
-		$(use_enable postscript spectre)
-		$(use_enable physics)
-		$(use_enable pulseaudio)
-		$(use_enable pulseaudio audio)
-		$(use_enable raw libraw)
-		$(use_enable scim)
-		$(use_enable sdl)
-		$(use_enable sndfile audio)
-		$(use_enable static-libs static)
-		$(use_enable svg librsvg)
-		$(use_enable systemd)
-		$(use_enable system-lz4 liblz4)
-		$(use_enable tslib)
-		$(use_enable v4l2)
-		$(use_enable wayland)
-		$(use_enable xim)
-		$(use_enable xine)
-		$(use_enable bmp image-loader-bmp)
-		$(use_enable bmp image-loader-wbmp)
-		$(use_enable eet image-loader-eet)
 		$(use_enable ico image-loader-ico)
+		$(use_enable ibus)
 		$(use_enable jpeg2k image-loader-jp2k)
-		$(use_enable psd image-loader-psd)
-		$(use_enable ppm image-loader-pmaps)
-		$(use_enable tga image-loader-tga)
-		$(use_enable gif image-loader-gif)
+		$(use_enable neon)
+		$(use_enable nls)
+		$(use_enable oldlua lua-old)
+		$(use_enable physics)
 		$(use_enable pixman)
 		$(use_enable pixman pixman-font)
 		$(use_enable pixman pixman-rect)
@@ -205,29 +226,61 @@ multilib_src_configure()
 		$(use_enable pixman pixman-image)
 		$(use_enable pixman pixman-image-scale-sample)
 		$(use_enable png image-loader-png)
+		$(use_enable ppm image-loader-pmaps)
+		$(use_enable postscript spectre)
+		$(use_enable psd image-loader-psd)
+		$(use_enable pulseaudio)
+		$(use_enable rawphoto libraw)
+		$(use_enable scim)
+		$(use_enable sdl)
+		$(use_enable sound audio)
+		$(use_enable systemd)
 		$(use_enable tiff image-loader-tiff)
+		$(use_enable tslib)
+		#$(use_enable udisk udisk-mount)
+		$(use_enable v4l v4l2)
+		$(use_enable valgrind)
+		$(use_enable wayland)
 		$(use_enable webp image-loader-webp)
+		$(use_enable xim)
+		$(use_enable xine)
 		$(use_enable xpm image-loader-xpm)
-		--with-crypto=$(usex gnutls gnutls $(usex ssl openssl none))
-		--with-opengl=$(usex opengl full $(usex gles es none))
-		--with-profile=$(usex debug debug release)
-		--with-glib=$(usex glib yes no)
-		--with-tests=$(usex test regular none)
-		--with-x11=$(usex X xlib none)
-		$(use_with X x)
-
+		--enable-cserve
 		--enable-image-loader-generic
 		--enable-image-loader-jpeg
-		--enable-cserve
-		--enable-libmount
-		--enable-xinput2
-		--disable-xinput22
+		$(use_enable svg librsvg)
+
+		#--disable-eeze-mount
+		--disable-tizen
 		--disable-gesture
 		--disable-gstreamer
-		--disable-lua-old
+		--enable-xinput2
+		#--disable-xinput22
+		--enable-elput
 		--disable-multisense
-		--disable-tizen
-		--enable-i-really-know-what-i-am-doing-and-that-this-will-probably-break-things-and-i-will-fix-them-myself-and-send-patches-abb
+		--enable-libmount
+
+		# external lz4 support currently broken because of unstable ABI/API
+		#--enable-liblz4
 	)
-	autotools-utils_src_configure
+
+	enlightenment_src_configure
+}
+
+src_compile() {
+	if host-is-pax && ! use oldlua ; then
+		# We need to build the lua code first so we can pax-mark it. #547076
+		local target='_e_built_sources_target_gogogo_'
+		printf '%s: $(BUILT_SOURCES)\n' "${target}" >> src/Makefile || die
+		emake -C src "${target}"
+		emake -C src bin/elua/elua
+		pax-mark m src/bin/elua/.libs/elua
+	fi
+	enlightenment_src_compile
+}
+
+src_install() {
+	MAKEOPTS+=" -j1"
+
+	enlightenment_src_install
 }
