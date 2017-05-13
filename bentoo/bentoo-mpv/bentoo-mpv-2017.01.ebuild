@@ -15,6 +15,7 @@ S="${WORKDIR}"
 DEPEND=""
 RDEPEND="${DEPEND}
 	media-video/mpv
+	net-misc/youtube-dl
 	"
 
 src_install() {
