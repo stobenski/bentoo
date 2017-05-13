@@ -64,6 +64,7 @@ RDEPEND="${DEPEND}
 	net-firewall/ipset
 	net-mail/getmail
 	net-misc/ntp
+	net-misc/youtube-dl
 	net-p2p/transmission
 	sys-apps/gptfdisk
 	sys-apps/hdparm
