@@ -81,9 +81,9 @@ src_install() {
 		README.FAQ Changes doc/README* doc/changes.txt doc/etc/* doc/rxvt-tabbed
 
 	make_desktop_entry urxvt urxvt utilities-terminal \
-		"System;TerminalEmulator;Comment[en_GB]=An unicode capable rxvt clone"
+		"System;TerminalEmulator"
 	make_desktop_entry urxvtc urxvtc utilities-terminal \
-		"System;TerminalEmulator;Comment[en_GB]=An unicode capable rxvt clone client for urxvtd"
+		"System;TerminalEmulator"
 
 	systemd_dounit "${FILESDIR}"/urxvtd@.service
 	systemd_douserunit "${FILESDIR}"/urxvtd.service
