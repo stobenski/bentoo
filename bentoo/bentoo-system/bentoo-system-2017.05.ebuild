@@ -97,6 +97,8 @@ RDEPEND="${DEPEND}
 	|| ( sys-process/vixie-cron virtual/cron )
 	optimus? ( video_cards_nvidia? ( x11-misc/bumblebee ) )
 	rxvt? ( bentoo/bentoo-rxvt )
+	x11-misc/xdg-user-dirs
+	x11-misc/xdg-user-dirs-gtk
 	"
 
 src_install() {
