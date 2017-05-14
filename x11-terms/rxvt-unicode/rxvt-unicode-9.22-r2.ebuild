@@ -82,8 +82,6 @@ src_install() {
 
 	make_desktop_entry urxvt urxvt utilities-terminal \
 		"System;TerminalEmulator;Comment[en_GB]=An unicode capable rxvt clone"
-	make_desktop_entry urxvt-tabbed urxvt-tabbed utilities-terminal \
-		"System;TerminalEmulator;Comment[en_GB]=An unicode capable and tabbed rxvt clone"
 	make_desktop_entry urxvtc urxvtc utilities-terminal \
 		"System;TerminalEmulator;Comment[en_GB]=An unicode capable rxvt clone client for urxvtd"
 
