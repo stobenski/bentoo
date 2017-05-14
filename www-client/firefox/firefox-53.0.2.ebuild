@@ -1,7 +1,6 @@
-# Copyright 1999-2017 Gentoo Foundation
-# Distributed under the terms of the GNU General Public License v2
+# Copyright 1999-2017 The Bentoo Authors. All rights reserved.
+# Distributed under the terms of the GNU General Public License v3 or later
 
-EAPI=6
 VIRTUALX_REQUIRED="pgo"
 WANT_AUTOCONF="2.1"
 MOZ_ESR=""
