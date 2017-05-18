@@ -44,7 +44,7 @@ RDEPEND="${DEPEND}
 
 	!gnome-base/gnome-applets
 
-	>=x11-wm/mutter-${PV}
+	>=x11-wm/mutter-3.22
 	>=gnome-base/gnome-shell-${PV}[bluetooth?]
 	>=gnome-extra/gnome-shell-frippery-${PV}
 
@@ -64,7 +64,7 @@ RDEPEND="${DEPEND}
 	)
 	handbrake? ( media-video/handbrake )
 	extras? (
-		>=app-admin/gnome-system-log-20160922
+		>=app-admin/gnome-system-log-3.9.90
 		>=app-arch/file-roller-${PV}
 		>=app-dicts/gnome-dictionary-3.20.0
 		>=gnome-base/dconf-editor-${PV}
