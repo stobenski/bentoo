@@ -85,7 +85,7 @@ src_install() {
 	make_desktop_entry urxvtc urxvtc utilities-terminal \
 		"System;TerminalEmulator"
 
-	systemd_dounit "${FILESDIR}"/urxvtd@.service
+	systemd_newunit "${FILESDIR}"/urxvtd_at.service "urxvtd@.service"
 	systemd_douserunit "${FILESDIR}"/urxvtd.service
 	systemd_douserunit "${FILESDIR}"/urxvtd.socket
 }
