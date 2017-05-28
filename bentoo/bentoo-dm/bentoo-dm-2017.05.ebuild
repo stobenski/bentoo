@@ -11,7 +11,7 @@ IUSE="gnome kde X"
 
 DEPEND=""
 RDEPEND="${DEPEND}
-	gnome? ( gnome-base/gdm )
-	kde? ( || ( x11-misc/sddm kde-base/kdm )  )
+	gnome? ( || ( x11-misc/lightdm[gnome,gtk] gnome-base/gdm ) )
+	kde? ( || ( x11-misc/lightdm[qt5] x11-misc/sddm kde-base/kdm ) )
 	X? ( x11-apps/xdm )
 	"
