@@ -7,7 +7,7 @@ HOMEPAGE="https://bitbucket.org/redeyeteam/bentoo"
 KEYWORDS="amd64 arm x86"
 SLOT="0"
 LICENSE="GPL-3"
-IUSE="enlightenment exploit gnome kde mate +mobile +pelican proxie xfce wine cockpit steam"
+IUSE="enlightenment exploit gnome kde lxqt mate +mobile +pelican proxie xfce wine cockpit steam"
 
 DEPEND=""
 
@@ -23,6 +23,7 @@ PDEPEND="
 	exploit? ( bentoo/bentoo-exploit )
 	gnome? ( bentoo/bentoo-gnome )
 	kde? ( bentoo/bentoo-kde )
+	lxqt? ( lxqt-base/lxqt-meta )
 	mate? ( bentoo/bentoo-mate )
 	mobile? ( bentoo/bentoo-mobile )
 	pelican? ( bentoo/bentoo-pelican )
