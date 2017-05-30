@@ -23,7 +23,7 @@ PDEPEND="
 	exploit? ( bentoo/bentoo-exploit )
 	gnome? ( bentoo/bentoo-gnome )
 	kde? ( bentoo/bentoo-kde )
-	lxqt? ( lxqt-base/lxqt-meta )
+	lxqt? ( bentoo/bentoo-lxqt )
 	mate? ( bentoo/bentoo-mate )
 	mobile? ( bentoo/bentoo-mobile )
 	pelican? ( bentoo/bentoo-pelican )
