@@ -20,7 +20,8 @@ IUSE=""
 
 RDEPEND="virtual/udev"
 
-DEPEND="${RDEPEND}"
+DEPEND="${RDEPEND}
+	sys-devel/ipatch"
 
 S="${WORKDIR}"
 
