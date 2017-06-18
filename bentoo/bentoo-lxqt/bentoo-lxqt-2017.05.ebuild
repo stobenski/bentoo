@@ -7,7 +7,7 @@ DESCRIPTION="Bentoo lxqt meta ebuild"
 HOMEPAGE="https://bitbucket.org/redeyeteam/bentoo"
 SLOT="0"
 LICENSE="GPL-3"
-IUSE=""
+IUSE="bluetooth"
 
 DEPEND=""
 RDEPEND="${DEPEND}
@@ -15,6 +15,8 @@ RDEPEND="${DEPEND}
 	bentoo/bentoo-dm
 
 	lxqt-base/lxqt-meta
+	kde-apps/okular
+	bluetooth? ( net-wireless/blueman )
 "
 
 PDEPEND=""
