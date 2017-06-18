@@ -15,7 +15,6 @@ RDEPEND="${DEPEND}
 	bentoo/bentoo-dm
 
 	lxqt-base/lxqt-meta
-	kde-apps/okular
 	bluetooth? ( net-wireless/blueman )
 "
 
