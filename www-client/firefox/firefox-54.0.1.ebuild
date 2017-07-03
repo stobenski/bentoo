@@ -1,5 +1,5 @@
-# Copyright 1999-2017 The Bentoo Authors. All rights reserved.
-# Distributed under the terms of the GNU General Public License v3 or later
+# Copyright 1999-2017 Gentoo Foundation
+# Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 VIRTUALX_REQUIRED="pgo"
@@ -24,7 +24,7 @@ if [[ ${MOZ_ESR} == 1 ]]; then
 fi
 
 # Patch version
-PATCH="${PN}-53.0-patches-02"
+PATCH="${PN}-54.0-patches-03"
 MOZ_HTTP_URI="https://archive.mozilla.org/pub/${PN}/releases"
 
 MOZCONFIG_OPTIONAL_WIFI=1
@@ -34,11 +34,11 @@ inherit check-reqs flag-o-matic toolchain-funcs eutils gnome2-utils mozconfig-v6
 DESCRIPTION="Firefox Web Browser"
 HOMEPAGE="http://www.mozilla.com/firefox"
 
-KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~ia64 ~ppc ~ppc64 ~x86 ~amd64-linux ~x86-linux"
+KEYWORDS="~amd64 ~x86"
 
 SLOT="0"
 LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
-IUSE="bindist +gmp-autoupdate hardened hwaccel jack nsplugin pgo rust selinux test"
+IUSE="bindist +gmp-autoupdate hardened hwaccel jack nsplugin pgo selinux test"
 RESTRICT="!bindist? ( bindist )"
 
 PATCH_URIS=( https://dev.gentoo.org/~{anarchy,axs,polynomial-c}/mozilla/patchsets/${PATCH}.tar.xz )
@@ -50,13 +50,13 @@ ASM_DEPEND=">=dev-lang/yasm-1.1"
 
 RDEPEND="
 	jack? ( virtual/jack )
-	>=dev-libs/nss-3.29.5
-	>=dev-libs/nspr-4.13.1
+	>=dev-libs/nss-3.30.2
+	>=dev-libs/nspr-4.14
 	selinux? ( sec-policy/selinux-mozilla )"
 
 DEPEND="${RDEPEND}
 	pgo? ( >=sys-devel/gcc-4.5 )
-	rust? ( dev-lang/rust )
+	>=dev-lang/rust-1.15.1
 	amd64? ( ${ASM_DEPEND} virtual/opengl )
 	x86? ( ${ASM_DEPEND} virtual/opengl )"
 
@@ -97,11 +97,6 @@ pkg_setup() {
 		ewarn "You will do a double build for profile guided optimization."
 		ewarn "This will result in your build taking at least twice as long as before."
 	fi
-
-	if use rust; then
-		einfo
-		ewarn "This is very experimental, should only be used by those developing firefox."
-	fi
 }
 
 pkg_pretend() {
@@ -124,7 +119,6 @@ src_unpack() {
 src_prepare() {
 	# Apply our patches
 	eapply "${WORKDIR}/firefox"
-	eapply "${FILESDIR}"/musl_drop_hunspell_alloc_hooks.patch
 
 	# Enable gnomebreakpad
 	if use debug ; then
@@ -218,8 +212,6 @@ src_configure() {
 
 	mozconfig_annotate '' --enable-extensions="${MEXTENSIONS}"
 
-	mozconfig_use_enable rust
-
 	# Allow for a proper pgo build
 	if use pgo; then
 		echo "mk_add_options PROFILE_GEN_SCRIPT='EXTRA_TEST_ARGS=10 \$(MAKE) -C \$(MOZ_OBJDIR) pgo-profile-run'" >> "${S}"/.mozconfig
@@ -230,10 +222,6 @@ src_configure() {
 
 	# Finalize and report settings
 	mozconfig_final
-
-	if [[ $(gcc-major-version) -lt 4 ]]; then
-		append-cxxflags -fno-stack-protector
-	fi
 
 	# workaround for funky/broken upstream configure...
 	SHELL="${SHELL:-${EPREFIX}/bin/bash}" \
