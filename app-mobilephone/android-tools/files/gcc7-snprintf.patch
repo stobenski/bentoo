@@ -6,7 +6,7 @@ diff -Naur a/system/core/fastboot/usb.h b/system/core/fastboot/usb.h
  
      char serial_number[256];
 -    char device_path[256];
-+    char device_path[250];
++    char device_path[260];
  };
  
  typedef int (*ifc_match_func)(usb_ifc_info *ifc);
