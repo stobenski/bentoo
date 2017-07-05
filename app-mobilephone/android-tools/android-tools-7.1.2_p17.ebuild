@@ -41,6 +41,7 @@ src_unpack() {
 
 src_prepare() {
 	ipatch push . "${FILESDIR}"/${P}-musl-fixes.patch
+	ipatch push . "${FILESDIR}"/gcc7-snprintf.patch
 	ipatch push . "${FILESDIR}"/${P}-Makefile.patch
 
 	eapply_user

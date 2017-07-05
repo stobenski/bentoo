@@ -1,0 +1,24 @@
+diff -Naur a/system/core/fastboot/usb.h b/system/core/fastboot/usb.h
+--- a/system/core/fastboot/usb.h	2017-07-05 06:09:11.000000000 +0700
++++ b/system/core/fastboot/usb.h	2017-07-05 06:14:05.009558054 +0700
+@@ -50,7 +50,7 @@
+     unsigned char writable;
+ 
+     char serial_number[256];
+-    char device_path[256];
++    char device_path[260];
+ };
+ 
+ typedef int (*ifc_match_func)(usb_ifc_info *ifc);
+diff -Naur a/system/core/fastboot/usb_linux.cpp b/system/core/fastboot/usb_linux.cpp
+--- a/system/core/fastboot/usb_linux.cpp	2017-07-05 06:09:11.000000000 +0700
++++ b/system/core/fastboot/usb_linux.cpp	2017-07-05 06:15:11.425727738 +0700
+@@ -175,7 +175,7 @@
+      */
+     info.serial_number[0] = '\0';
+     if (dev->iSerialNumber) {
+-        char path[80];
++        char path[284];
+         int fd;
+ 
+         snprintf(path, sizeof(path),
