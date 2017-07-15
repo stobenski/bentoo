@@ -76,6 +76,7 @@ RDEPEND="${DEPEND}
 	sys-apps/usbutils
 	sys-devel/ipatch
 	sys-fs/cryptsetup
+	sys-fs/dosfstools
 	lvm? ( sys-fs/lvm2 )
 	sys-fs/squashfs-tools
 	udf? ( sys-fs/udftools )
