@@ -1,12 +1,12 @@
 diff -Naur a/install.rdf b/install.rdf
---- a/install.rdf	2017-01-11 19:33:34.000000000 +0500
-+++ b/install.rdf	2017-02-14 20:24:26.630351735 +0500
-@@ -1,117 +1,65 @@
+--- a/install.rdf	2017-04-26 15:36:42.000000000 +0700
++++ b/install.rdf	2017-07-15 08:52:53.513688560 +0700
+@@ -1,140 +1,56 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<r:RDF xmlns:r="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.mozilla.org/2004/em-rdf#">
 -    <r:Description about="urn:mozilla:install-manifest">
 -        <id>adnauseam@rednoise.org</id>
--        <version>3.0.50</version>
+-        <version>3.3.331</version>
 -        <name>AdNauseam</name>
 -        <description>Fight back against advertising surveillance</description>
 -        <homepageURL>http://adnauseam.io</homepageURL>
@@ -17,14 +17,6 @@ diff -Naur a/install.rdf b/install.rdf
 -        <optionsType>2</optionsType>
 -
 -        <localized><r:Description>
--            <locale>cs</locale>
--            <name>AdNauseam</name>
--            <description>Bojovat proti reklamám které vás sledují</description>
--            <creator>Daniel C. Howe</creator>
--            <homepageURL>http://adnauseam.io</homepageURL>
--        </r:Description></localized>
--
--        <localized><r:Description>
 -            <locale>de</locale>
 -            <name>AdNauseam</name>
 -            <description>Wehren Sie sich gegen Werbungs Überwachung</description>
@@ -33,17 +25,57 @@ diff -Naur a/install.rdf b/install.rdf
 -        </r:Description></localized>
 -
 -        <localized><r:Description>
--            <locale>id</locale>
+-            <locale>es</locale>
 -            <name>AdNauseam</name>
--            <description>Lawan pemantauan iklan</description>
+-            <description>Combata la vigilancia publicitaria</description>
 -            <creator>Daniel C. Howe</creator>
 -            <homepageURL>http://adnauseam.io</homepageURL>
 -        </r:Description></localized>
 -
 -        <localized><r:Description>
--            <locale>sv</locale>
+-            <locale>fr</locale>
 -            <name>AdNauseam</name>
--            <description>Slå tillbaka mot övervakningsreklam</description>
+-            <description>Combattez contre la surveillance publicitaire</description>
+-            <creator>Daniel C. Howe</creator>
+-            <homepageURL>http://adnauseam.io</homepageURL>
+-        </r:Description></localized>
+-
+-        <localized><r:Description>
+-            <locale>it</locale>
+-            <name>AdNauseam</name>
+-            <description>Difenditi dal controllo pubblicitario</description>
+-            <creator>Daniel C. Howe</creator>
+-            <homepageURL>http://adnauseam.io</homepageURL>
+-        </r:Description></localized>
+-
+-        <localized><r:Description>
+-            <locale>pt-BR</locale>
+-            <name>AdNauseam</name>
+-            <description>Lute contra a vigilância publicitária</description>
+-            <creator>Daniel C. Howe</creator>
+-            <homepageURL>http://adnauseam.io</homepageURL>
+-        </r:Description></localized>
+-
+-        <localized><r:Description>
+-            <locale>pt-PT</locale>
+-            <name>AdNauseam</name>
+-            <description>Lute contra a vigilância publicitária</description>
+-            <creator>Daniel C. Howe</creator>
+-            <homepageURL>http://adnauseam.io</homepageURL>
+-        </r:Description></localized>
+-
+-        <localized><r:Description>
+-            <locale>ru</locale>
+-            <name>AdNauseam</name>
+-            <description>Противодействие рекламному шпионажу</description>
+-            <creator>Daniel C. Howe</creator>
+-            <homepageURL>http://adnauseam.io</homepageURL>
+-        </r:Description></localized>
+-
+-        <localized><r:Description>
+-            <locale>sk</locale>
+-            <name>AdNauseam</name>
+-            <description>Bojovať proti sledovaniu reklamami</description>
 -            <creator>Daniel C. Howe</creator>
 -            <homepageURL>http://adnauseam.io</homepageURL>
 -        </r:Description></localized>
@@ -100,15 +132,6 @@ diff -Naur a/install.rdf b/install.rdf
 -            </r:Description>
 -        </targetApplication>
 -
--        <!-- Conkeror -->
--        <targetApplication>
--            <r:Description>
--                <id>{a79fe89b-6662-4ff4-8e88-09950ad4dfde}</id>
--                <minVersion>0.1</minVersion>
--                <maxVersion>9.9</maxVersion>
--            </r:Description>
--        </targetApplication>
--
 -        <!-- Thunderbird -->
 -        <targetApplication>
 -            <r:Description>
@@ -125,7 +148,7 @@ diff -Naur a/install.rdf b/install.rdf
 +       <em:id>adnauseam@rednoise.org</em:id>
 +       <em:name>AdNauseam</em:name>
 +       <em:description>Fight back against advertising surveillance.</em:description>
-+       <em:version>3.0.50</em:version>
++       <em:version>3.3.331</em:version>
 +	<em:homepageURL>http://adnauseam.io</em:homepageURL>
 +       <em:bootstrap>true</em:bootstrap>
 +       <em:type>2</em:type>
@@ -165,21 +188,12 @@ diff -Naur a/install.rdf b/install.rdf
 +            </Description>
 +        </em:targetApplication>
 +
-+         <!-- Conkeror -->
-+        <em:targetApplication>
-+            <Description>
-+                <em:id>{a79fe89b-6662-4ff4-8e88-09950ad4dfde}</em:id>
-+                <em:minVersion>0.1</em:minVersion>
-+                <em:maxVersion>9.9</em:maxVersion>
-+            </Description>
-+        </em:targetApplication>
-+
 +         <!-- Thunderbird -->
 +        <em:targetApplication>
 +            <Description>
 +                <em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id>
 +                <em:minVersion>31.0</em:minVersion>
-+                <em:maxVersion>45.0</em:maxVersion>
++                <em:maxVersion>45.*</em:maxVersion>
 +            </Description>
 +        </em:targetApplication>
 +    </Description>
