@@ -14,6 +14,7 @@ PDEPEND="
 		www-plugins/chrome-binary-plugins
 	)
 	firefox? (
+		www-plugins/adnauseam
 		www-plugins/classic-theme-restorer
 		www-plugins/firebug
 		www-plugins/foxyproxy
