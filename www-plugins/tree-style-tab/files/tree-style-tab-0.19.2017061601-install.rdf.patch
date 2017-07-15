@@ -275,7 +275,7 @@ diff -Naur a/install.rdf b/install.rdf
 +  <Description about="urn:mozilla:install-manifest">
 +    <em:id>treestyletab@piro.sakura.ne.jp</em:id>
 +    <em:name>Tree Style Tab</em:name>
-+    <em:version>0.19.2017031101</em:version>
++    <em:version>0.19.2017061601</em:version>
 +    <em:creator>YUKI &quot;Piro&quot; Hiroshi</em:creator>
 +    <em:type>2</em:type>
 +    <em:multiprocessCompatible>true</em:multiprocessCompatible>
