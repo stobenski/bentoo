@@ -1,8 +1,9 @@
 # Copyright 1999-2017 The Bentoo Authors. All rights reserved.
 # Distributed under the terms of the GNU General Public License v3 or later
 
+
 EAPI="6"
-PYTHON_COMPAT=( python3_4 )
+PYTHON_COMPAT=( python2_7 )
 
 if [[ ${PV} == "9999" ]] ; then
 	inherit git-r3
@@ -22,7 +23,7 @@ else
 	MY_P="${PV}-RELEASE"
 	SRC_URI="https://github.com/apple/swift/archive/swift-${MY_P}.tar.gz -> swift-${MY_P}.tar.gz
 	https://github.com/apple/swift-llvm/archive/swift-${MY_P}.tar.gz -> swift-llvm-${MY_P}.tar.gz
-    https://github.com/apple/swift-clang/archive/swift-${MY_P}.tar.gz -> swift-clang-${MY_P}.tar.gz
+	https://github.com/apple/swift-clang/archive/swift-${MY_P}.tar.gz -> swift-clang-${MY_P}.tar.gz
 	https://github.com/apple/swift-lldb/archive/swift-${MY_P}.tar.gz -> swift-lldb-${MY_P}.tar.gz
 	https://github.com/apple/swift-cmark/archive/swift-${MY_P}.tar.gz -> swift-cmark-${MY_P}.tar.gz
 	https://github.com/apple/swift-llbuild/archive/swift-${MY_P}.tar.gz -> swift-llbuild-${MY_P}.tar.gz
@@ -33,7 +34,7 @@ else
 	https://github.com/apple/swift-integration-tests/archive/swift-${MY_P}.tar.gz -> swift-integration-tests-${MY_P}.tar.gz"
 fi
 
-inherit autotools python-single-r1 eutils
+inherit autotools python-single-r1 eutils flag-o-matic
 
 DESCRIPTION="The Swift programming language and debugger"
 HOMEPAGE="https://swift.org"
@@ -50,43 +51,47 @@ RDEPEND="dev-db/sqlite
 	dev-libs/libxml2
 	dev-python/six[${PYTHON_USEDEP}]
 	sys-apps/util-linux
-	>=sys-libs/ncurses-5.9-r3:5/5[tinfo,abi_x86_32(-)]"
+	>=sys-libs/ncurses-5.9-r3:5/5[tinfo,abi_x86_32(-)]
+	dev-libs/libblocksruntime"
 
 DEPEND="${RDEPEND}
 	${PYTHON_DEPS}
 	dev-vcs/git
-	>=sys-devel/clang-3.6
+	net-misc/rsync
+	>=sys-devel/clang-3.8
 	dev-util/ninja
 	dev-lang/swig
 	dev-lang/perl
 	dev-python/sphinx
-	sys-devel/llvm[-lldb]"
+	sys-devel/llvm[-lldb]
+	dev-util/cmake
+	dev-python/six[python2_7]
+	dev-python/sphinx[python2_7]
+	dev-python/requests[python2_7]"
 
 DOCS=( LICENSE.txt  )
 
-	# Prefer LZMA2 compression for smaller files. Merge request(s) upstream:
-	# https://github.com/apple/swift/pull/801
-	# 0001-build-script-Reduce-the-size-of-development-snapshot.patch
-
-	# Sphinx 1.3.5 raises a warning (promoted to error) when using an unknown
-	# syntax highlighting language (like "swift").
-	# swift-sphinx2.patch
-
-	# Typo in build-script
-	# build-script.patch
-
-	# Fix for missing initialization
-	# swift-init-CachedVFile.patch
-
-PATCHES=( "${FILESDIR}"/0001-build-script-Reduce-the-size-of-development-snapshot.patch
-	"${FILESDIR}"/swift-sphinx2.patch
-	"${FILESDIR}"/build-script.patch
-	"${FILESDIR}"/swift-init-CachedVFile.patch )
+PATCHES=( "${FILESDIR}"/swift-3.1.1-sourcekit_link_order.patch
+	"${FILESDIR}"/swift-3.1.1-icu59.patch
+	"${FILESDIR}"/swift-3.1.1-sphinx1.6.patch )
 
 S="${WORKDIR}"
 CARCH=`uname -m`
 
 src_prepare() {
+	# Use python2 where appropriate
+	find "${S}/swift-swift-${MY_P}" -type f -print0 | \
+		xargs -0 sed -i 's|/usr/bin/env python$|&2|'
+	find "${S}/swift-lldb-swift-${MY_P}" -name Makefile -print0 | \
+		xargs -0 sed -i 's|python-config|python2-config|g'
+	sed -i '/^cmake_minimum_required/a set(Python_ADDITIONAL_VERSIONS 2.7)' \
+		"${S}/swift-swift-${MY_P}/CMakeLists.txt"
+	sed -i '/^cmake_minimum_required/a set(Python_ADDITIONAL_VERSIONS 2.7)' \
+		"${S}/swift-lldb-swift-${MY_P}/CMakeLists.txt"
+    sed -i 's/\<python\>/&2/' \
+		"${S}/swift-swift-${MY_P}/utils/build-script-impl" \
+		"${S}/swift-swift-${MY_P}/test/sil-passpipeline-dump/basic.test-sh"
+
 	# Use directory names which build-script expects
 	for sdir in llvm lldb clang cmark; do
 		ln -sf swift-${sdir}-swift-${MY_P} ${sdir}
@@ -108,20 +113,27 @@ src_prepare() {
 	fi
 	cd ..
 
-	cd "${S}/lldb"
-	ipatch push . "${FILESDIR}"/fix-lldb-build.patch
-	cd ..
-
 	eapply_user
+}
+
+_build_script_wrapper() {
+    ./utils/build-script "$@"
 }
 
 src_compile(){
 	export LC_CTYPE=en_US.UTF-8
 	export LANG=en_US.UTF-8
+
+	# Makepkg now adds -fno-plt to C(XX)FLAGS by default, which clang doesn't understand
+	#export CFLAGS=$(echo "$CFLAGS" | sed -e 's/\(\W\+\|^\)-fno-plt\b//')
+	#export CXXFLAGS=$(echo "$CXXFLAGS" | sed -e 's/\(\W\+\|^\)-fno-plt\b//')
+	strip-flags
+
 	installable_package="$(readlink -f ${S}/swift-${MY_P}.tar.xz)"
+
+	export SWIFT_SOURCE_ROOT="${S}"
+
 	cd "${S}/swift"
-#   export SWIFT_SOURCE_ROOT="${S}"
-#	export LDFLAGS='-ldl -lpthread'
 	utils/build-script \
 		--preset-file="${FILESDIR}/build-presets.ini" \
 		--preset=buildbot_bentoo_linux \
@@ -131,6 +143,12 @@ src_compile(){
 
 src_test() {
 	cd "${S}/swift"
+
+    # Fix the lldb swig binding's import path (matches Arch LLDB package)
+    # Need to do this here as well as the install since the test suite
+    # uses the lldb python bindings directly from the build dir
+    sed -i "/import_module('_lldb')/s/_lldb/lldb.&/" \
+        "${S}/build/Ninja-ReleaseAssert/lldb-linux-${CARCH}/lib/python2.7/site-packages/lldb/__init__.py"
 
     export SWIFT_SOURCE_ROOT="${S}"
 	utils/build-script -R -t
