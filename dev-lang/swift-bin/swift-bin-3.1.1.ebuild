@@ -1,6 +1,7 @@
 # Copyright 1999-2017 The Bentoo Authors. All rights reserved.
 # Distributed under the terms of the GNU General Public License v3 or later
 
+
 EAPI="6"
 PYTHON_COMPAT=( python2_7 )
 
@@ -24,7 +25,8 @@ RDEPEND="dev-libs/icu
 		dev-python/six[${PYTHON_USEDEP}]
 		sys-apps/util-linux
 		sys-devel/clang
-		>=sys-libs/ncurses-5.9:5[tinfo]"
+		>=sys-libs/ncurses-5.9:5[tinfo]
+		dev-python/six[python2_7]"
 
 DEPEND="${RDEPEND}
 		${PYTHON_DEPS}"
@@ -34,26 +36,27 @@ DOCS=( LICENSE.txt )
 S="${WORKDIR}/${MY_P}"
 
 src_install() {
-    # Permission fix
-    find "${S}" -type d -exec chmod 755 {} +
+	# Permission fix
+	find "${S}" -type d -exec chmod 755 {} +
 
-    # Remove all unnecessary stuff
-    rm -rf "${S}/usr/local"
+	# Remove all unnecessary stuff
+	rm -rf "${S}/usr/local"
 
-    # Yuck! patching libedit SONAME
-    find "${S}/usr/bin" -type f -exec sed -i 's/libedit\.so\.2/libedit\.so\.0/g' {} \;
-    find "${S}/usr/lib" -type f -exec sed -i 's/libedit\.so\.2/libedit\.so\.0/g' {} \;
+	# Yuck! patching libedit SONAME
+	find "${S}/usr/bin" -type f -exec sed -i 's/libedit\.so\.2/libedit\.so\.0/g' {} \;
+	find "${S}/usr/lib" -type f -exec sed -i 's/libedit\.so\.2/libedit\.so\.0/g' {} \;
 
-    # remove the six.py dumped in python's site packages
-    rm "${S}/usr/lib/python2.7/site-packages/six.py"
+	# remove the six.py dumped in python's site packages
+	rm "${S}/usr/lib/python2.7/site-packages/six.py"
+	rm "${S}/usr/lib/python2.7/site-packages/six.pyc"
 
-    # Ensure the items have the right permissions..
-    # some tarballs from upstream seem to have the wrong ones
-    find "${S}/usr/bin" -type f -exec chmod a+rx {} \;
-    find "${S}/usr/lib" -type f -exec chmod a+r {} \;
+	# Ensure the items have the right permissions..
+	# some tarballs from upstream seem to have the wrong ones
+	find "${S}/usr/bin" -type f -exec chmod a+rx {} \;
+	find "${S}/usr/lib" -type f -exec chmod a+r {} \;
 
-    # Update glibc map paths
-#    sed -i 's/\/x86_64-linux-gnu//g' "${S}/usr/lib/swift/glibc/module.map"
+	# Move license
+	mv ${S}/usr/share/swift/LICENSE.txt ${S}/usr/share/licenses/${PN}
 
 	# this is a precompiled tarball
 	mkdir -p "${D}/opt/${MY_P}"
