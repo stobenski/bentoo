@@ -1,7 +1,9 @@
 # Copyright 1999-2017 The Bentoo Authors. All rights reserved.
 # Distributed under the terms of the GNU General Public License v3 or later
 
+
 EAPI=6
+
 inherit autotools eutils systemd
 
 DESCRIPTION="rxvt clone with xft and unicode support"
@@ -36,7 +38,13 @@ DEPEND="
 PATCHES=(
 	"${FILESDIR}"/${PN}-9.06-case-insensitive-fs.patch
 	"${FILESDIR}"/${PN}-9.21-xsubpp.patch
-	"${FILESDIR}"/${PN}-9.22-CVE-2017-7483.patch
+	"${FILESDIR}"/${P}-CVE-2017-7483.patch
+	"${FILESDIR}"/${P}-gentables.patch
+	"${FILESDIR}"/${P}-kerning.patch
+	"${FILESDIR}"/${P}-doc-urxvtcd.1.man.patch
+	"${FILESDIR}"/${P}-src_perl_kuake.patch
+	"${FILESDIR}"/${P}-src-urxvtcd.patch
+	"${FILESDIR}"/${P}-xwc.patch
 )
 
 src_prepare() {
@@ -45,8 +53,8 @@ src_prepare() {
 	# kill the rxvt-unicode terminfo file - #192083
 	sed -i -e "/rxvt-unicode.terminfo/d" doc/Makefile.in || die "sed failed"
 
+	epatch_user
 	eautoreconf
-	eapply_user && eautoreconf # Allow user patches
 }
 
 src_configure() {
