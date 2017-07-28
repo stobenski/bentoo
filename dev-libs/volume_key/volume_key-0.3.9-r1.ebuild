@@ -24,8 +24,9 @@ RDEPEND="
 	sys-apps/util-linux"
 
 src_prepare() {
-	ipatch push . "${FILESDIR}"/volume_key-0.3.9-fips-crash.patch
-	ipatch push . "${FILESDIR}"/volume_key-0.3.9-config.h.patch
+	ipatch push . "${FILESDIR}/${P}-fips-crash.patch"
+	ipatch push . "${FILESDIR}/${P}-config.h.patch"
+	ipatch push . "${FILESDIR}/${P}-translation-updates.patch"
 	eapply_user
 	eautoreconf
 }
