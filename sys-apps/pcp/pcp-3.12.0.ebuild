@@ -98,3 +98,7 @@ src_install() {
 	emake install_pcp
 	dodoc CHANGELOG README.md
 }
+
+pkg_postinst() {
+	elog "URL: http://localhost:44323"
+}

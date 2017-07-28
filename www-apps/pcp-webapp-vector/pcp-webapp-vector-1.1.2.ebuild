@@ -30,5 +30,6 @@ src_install() {
 
 pkg_postinst() {
 	elog "Vector web application for the Performance Co-Pilot (PCP)."
-	elog "URL: http://localhost:44323/vector/index.html#/?host=localhost:44323&hostspec=localhost"
+	echo
+	elog "URL: http://localhost:44323/vector"
 }

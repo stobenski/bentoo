@@ -34,6 +34,6 @@ pkg_postinst() {
 	elog "Co-Pilot (PCP) as the data repository.  Other Grafana backends are"
 	elog "not used."
 	echo
-	elog "URL: http://localhost:44323/"
+	elog "URL: http://localhost:44323/grafana"
 }
 

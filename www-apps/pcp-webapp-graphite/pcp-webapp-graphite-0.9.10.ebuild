@@ -33,4 +33,6 @@ pkg_postinst() {
 	elog "provides a graphite version that uses the Performance Co-Pilot (PCP)"
 	elog "as the data repository, and Graphites web interface renders it. The"
 	elog "Carbon and Whisper subsystems of Graphite are not included nor used."
+	echo
+	elog "URL: http://localhost:44323/graphite"
 }

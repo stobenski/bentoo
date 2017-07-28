@@ -35,7 +35,7 @@ RDEPEND="${DEPEND}
 	sys-fs/dmraid
 	>=sys-fs/cryptsetup-1.6.7
 	>=sys-apps/util-linux-2.27
-	sys-libs/libbytesize
+	dev-libs/libbytesize
 	>=sys-apps/kmod-19
 	>=virtual/libudev-215"
 
