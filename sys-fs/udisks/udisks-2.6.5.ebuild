@@ -2,13 +2,14 @@
 # Distributed under the terms of the GNU General Public License v3 or later
 
 EAPI="6"
+
 inherit eutils autotools multilib
 
 DESCRIPTION="Daemon providing interfaces to work with storage devices"
-HOMEPAGE="http://storaged-project.github.io/"
+HOMEPAGE="http://storaged.org"
 if [[ ${PV} == 9999* ]] ; then
 	inherit git-r3
-	EGIT_REPO_URI="https://github.com/storaged-project/storaged.git"
+	EGIT_REPO_URI="https://github.com/storaged-project/udisks.git"
 	KEYWORDS=""
 else
 	SRC_URI="https://github.com/storaged-project/${PN}/releases/download/${P}/${P}.tar.bz2"
@@ -19,9 +20,7 @@ LICENSE="GPL-2+"
 SLOT="2"
 IUSE="+lvm +lvmcache iscsi +btrfs +zram lsm bcache +test"
 
-
-DEPEND="!sys-fs/udisks
-	>=dev-libs/libatasmart-0.19
+DEPEND=">=dev-libs/libatasmart-0.19
 	>=sys-block/parted-3
 	iscsi? ( net-libs/libiscsi )
 	lvm? ( sys-fs/lvm2 )
@@ -34,7 +33,6 @@ RDEPEND="${DEPEND}"
 QA_MULTILIB_PATHS="usr/lib/udisks2/udisks-lvm"
 
 src_prepare() {
-#	ipatch push . "${FILESDIR}/storaged-2.6.2-iscsi-sessions.patch"
 	eapply_user
 	eautoreconf
 }
