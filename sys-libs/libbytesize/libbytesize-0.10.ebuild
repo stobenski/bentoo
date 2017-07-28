@@ -2,6 +2,7 @@
 # Distributed under the terms of the GNU General Public License v3 or later
 
 EAPI="6"
+
 PYTHON_COMPAT=( python3_4 python3_5 python3_6 )
 inherit python-single-r1 autotools eutils
 
@@ -30,8 +31,9 @@ RDEPEND="${DEPEND}
 	sys-devel/gettext
 	doc? ( >=dev-util/gtk-doc-1 )"
 
+S="${WORKDIR}/${P}"
+
 src_prepare() {
-	ipatch push . "${FILESDIR}/libbytesize-0.9-prefix.patch"
 	eapply_user
 	eautoreconf
 }
