@@ -2,6 +2,7 @@
 # Distributed under the terms of the GNU General Public License v3 or later
 
 EAPI="6"
+
 PYTHON_COMPAT=( python3_4 python3_5 python3_6 )
 inherit python-single-r1 autotools eutils
 
@@ -39,7 +40,6 @@ RDEPEND="${DEPEND}
 	>=virtual/libudev-215"
 
 src_prepare() {
-	ipatch push . "${FILESDIR}/libblockdev-2.4-prefix.patch"
 	eapply_user
 	eautoreconf
 }
