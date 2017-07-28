@@ -2,6 +2,7 @@
 # Distributed under the terms of the GNU General Public License v3 or later
 
 EAPI="6"
+
 PYTHON_COMPAT=(python{2_7,3_3})
 inherit user eutils python-any-r1
 
