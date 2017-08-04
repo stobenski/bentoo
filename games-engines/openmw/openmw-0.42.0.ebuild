@@ -2,11 +2,12 @@
 # Distributed under the terms of the GNU General Public License v3 or later
 
 EAPI="6"
+
 inherit gnome2-utils cmake-utils
 
 DESCRIPTION="An open source reimplementation of TES III: Morrowind"
-HOMEPAGE="http://openmw.org/"
-SRC_URI="https://github.com/OpenMW/openmw/archive/${P%_*}.tar.gz"
+HOMEPAGE="https://openmw.org/"
+SRC_URI="https://github.com/OpenMW/openmw/archive/${P}.tar.gz"
 
 LICENSE="GPL-3 MIT BitstreamVera ZLIB"
 SLOT="0"
@@ -16,14 +17,14 @@ IUSE="doc devtools +qt5"
 # 0.37.0: >=media-video/ffmpeg-0.9 is required for swresample
 RDEPEND="
 	>=dev-games/openscenegraph-3.3.4[ffmpeg,jpeg,png,qt5,sdl,svg,truetype,zlib]
-	media-libs/libtxc_dxtn
-	>=dev-games/mygui-3.2.2
-	>=dev-libs/boost-1.60.0[threads]
+	dev-games/mygui
+	dev-libs/boost:=[threads]
 	dev-libs/tinyxml[stl]
-	media-libs/libsdl2[joystick,opengl,X,video]
+	media-libs/libsdl2[joystick,opengl,video,X]
 	media-libs/openal
-	>=sci-physics/bullet-2.83
-	>=media-video/ffmpeg-0.9
+	media-libs/libtxc_dxtn
+	media-video/ffmpeg:=
+	>=sci-physics/bullet-2.86
 	virtual/opengl
 	qt5? ( app-arch/unshield
 		dev-qt/qtcore:5
@@ -35,10 +36,10 @@ DEPEND="${RDEPEND}
 		dev-python/sphinx
 		media-gfx/graphviz )"
 
-S=${WORKDIR}/${PN}-${P}
+S="${WORKDIR}/${PN}-${P}"
 
 src_prepare() {
-	default
+	cmake-utils_src_prepare
 
 	# We don't install license files
 	sed -e '/LICDIR/d' \
@@ -50,7 +51,8 @@ src_prepare() {
 }
 
 src_configure() {
-	use devtools && ! use qt5 && elog "'qt5' USE flag is disabled, 'openmw-cs' will not be installed"
+	use devtools && ! use qt5 && \
+		elog "'qt5' USE flag is disabled, 'openmw-cs' will not be installed"
 
 	local mycmakeargs=(
 		-DBUILD_BSATOOL=$(usex devtools)
@@ -101,9 +103,9 @@ pkg_postinst() {
 
 	elog "You need the original Morrowind data files. If you haven't"
 	elog "installed them yet, you can install them straight via the"
-	elog "installation wizard which is the officially"
-	elog "supported method (either by using the launcher or by calling"
-	elog "'openmw-wizard' directly)."
+	elog "installation wizard which is the officially supported method"
+	elog "(either by using the launcher or by calling 'openmw-wizard'"
+	elog "directly)."
 
 	if ! use qt5; then
 		elog
