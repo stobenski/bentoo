@@ -9,41 +9,66 @@ SLOT="0"
 LICENSE="GPL-3"
 IUSE="addons bluetooth filelight kamera kgpg kdialog kdepim kmix kpat krusader ksystemlog kwalletmanager kwalletpam networkmanager okular telepathy touchpad"
 
+KLV="17.12.50"
+
 DEPEND=""
 RDEPEND="${DEPEND}
 	bentoo/bentoo-xorg
 	bentoo/bentoo-dm
 
-	<kde-apps/ark-17.12.50
-	<kde-apps/dolphin-17.12.50
-	<kde-apps/dolphin-plugins-17.12.50
-	<kde-apps/gwenview-17.12.50
-	<kde-apps/kate-17.12.50
-	<kde-apps/kcalc-17.12.50
-	<kde-apps/kompare-17.12.50
-	<kde-apps/konsole-17.12.50
+	<kde-apps/ark-${KLV}
+	<kde-apps/dolphin-${KLV}
+	<kde-apps/dolphin-plugins-${KLV}
+	<kde-apps/gwenview-${KLV}
+	<kde-apps/kate-${KLV}
+	<kde-apps/kcalc-${KLV}
+	<kde-apps/kompare-${KLV}
+	<kde-apps/konsole-${KLV}
+	<kde-apps/spectacle-${KLV}
 
-	<kde-apps/spectacle-17.12.50
-	<kde-plasma/plasma-desktop-17.12.50
-	<kde-plasma/systemsettings-17.12.50
+	<kde-plasma/breeze-${KLV}
+	<kde-plasma/kactivitymanagerd-${KLV}
+	<kde-plasma/kde-cli-tools-${KLV}
+	<kde-plasma/kdecoration-${KLV}
+	<kde-plasma/kgamma-${KLV}
+	<kde-plasma/khotkeys-${KLV}
+	<kde-plasma/kinfocenter-${KLV}
+	<kde-plasma/kmenuedit-${KLV}
+	<kde-plasma/kscreen-${KLV}
+	<kde-plasma/kscreenlocker-${KLV}
+	<kde-plasma/ksshaskpass-${KLV}
+	<kde-plasma/ksysguard-${KLV}
+	<kde-plasma/kwayland-integration-${KLV}
+	<kde-plasma/kwin-${KLV}
+	<kde-plasma/kwrited-${KLV}
+	<kde-plasma/libkscreen-${KLV}
+	<kde-plasma/libksysguard-${KLV}
+	<kde-plasma/milou-${KLV}
+	<kde-plasma/oxygen-${KLV}
+	<kde-plasma/plasma-desktop-${KLV}
+	<kde-plasma/plasma-integration-${KLV}
+	<kde-plasma/plasma-workspace-${KLV}
+	<kde-plasma/polkit-kde-agent-${KLV}
+	<kde-plasma/powerdevil-${KLV}
+	<kde-plasma/systemsettings-${KLV}
+	<kde-plasma/user-manager-${KLV}
 
-	addons? ( <kde-plasma/kdeplasma-addons-17.12.50 )
-	bluetooth? ( <kde-plasma/bluedevil-17.12.50 )
-	filelight? ( <kde-apps/filelight-17.12.50 )
-	kamera? ( <kde-apps/kamera-17.12.50 )
-	kgpg? ( <kde-apps/kgpg-17.12.50 )
-	kdialog? ( <kde-apps/kdialog-17.12.50 )
-	kdepim? ( <kde-apps/kdepim-meta-17.12.50 )
-	kmix? ( <kde-apps/kmix-17.12.50 )
-	kpat? ( <kde-apps/kpat-17.12.50 )
+	addons? ( <kde-plasma/kdeplasma-addons-${KLV} )
+	bluetooth? ( <kde-plasma/bluedevil-${KLV} )
+	filelight? ( <kde-apps/filelight-${KLV} )
+	kamera? ( <kde-apps/kamera-${KLV} )
+	kgpg? ( <kde-apps/kgpg-${KLV} )
+	kdialog? ( <kde-apps/kdialog-${KLV} )
+	kdepim? ( <kde-apps/kdepim-meta-${KLV} )
+	kmix? ( <kde-apps/kmix-${KLV} )
+	kpat? ( <kde-apps/kpat-${KLV} )
 	krusader? ( =kde-misc/krusader-9999 )
-	ksystemlog? ( <kde-apps/ksystemlog-17.12.50 )
-	kwalletmanager? ( <kde-apps/kwalletmanager-17.12.50 )
-	kwalletpam? ( <kde-plasma/kwallet-pam-17.12.50
-					x11-misc/sddm[pam] )
-	networkmanager? ( <kde-plasma/plasma-nm-17.12.50 )
-	okular? ( <kde-apps/okular-17.12.50 )
-	telepathy? ( <kde-apps/plasma-telepathy-meta-17.12.50 )
+	ksystemlog? ( <kde-apps/ksystemlog-${KLV} )
+	kwalletmanager? ( <kde-apps/kwalletmanager-${KLV} )
+	kwalletpam? ( <kde-plasma/kwallet-pam-${KLV} x11-misc/sddm[pam] )
+	networkmanager? ( <kde-plasma/plasma-nm-${KLV} )
+	okular? ( <kde-apps/okular-${KLV} )
+	telepathy? ( <kde-apps/plasma-telepathy-meta-${KLV} )
 	touchpad? ( kde-plasma/plasma-desktop[touchpad] )
 "
 
