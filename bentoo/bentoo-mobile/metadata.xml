@@ -6,7 +6,7 @@
 		<name>Andrey Ovcharov</name>
 	</maintainer>
 	<use>
-		<flag name='android'>Install app-mobilephone/android-tools</flag>
+		<flag name='android'>Install dev-util/android-tools</flag>
 		<flag name='mediatek'>Install app-mobilephone/spflashtool</flag>
 		<flag name='samsung'>Install app-mobilephone/heimdall</flag>
 	</use>
