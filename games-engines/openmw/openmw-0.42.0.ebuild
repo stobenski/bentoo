@@ -16,7 +16,7 @@ IUSE="doc devtools +qt5"
 
 # 0.37.0: >=media-video/ffmpeg-0.9 is required for swresample
 RDEPEND="
-	>=dev-games/openscenegraph-3.3.4[ffmpeg,jpeg,png,qt5,sdl,svg,truetype,zlib]
+	( >=dev-games/openscenegraph-3.3.4[ffmpeg,jpeg,png,sdl,svg,truetype,zlib] >=dev-games/openscenegraph-qt-3.3.4 )
 	dev-games/mygui
 	dev-libs/boost:=[threads]
 	dev-libs/tinyxml[stl]
