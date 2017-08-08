@@ -65,9 +65,9 @@ DEPEND="${RDEPEND}
 	dev-python/sphinx
 	sys-devel/llvm[-lldb]
 	dev-util/cmake
-	dev-python/six[python2_7]
-	dev-python/sphinx[python2_7]
-	dev-python/requests[python2_7]"
+	dev-python/six[python_targets_python2_7]
+	dev-python/sphinx[python_targets_python2_7]
+	dev-python/requests[python_targets_python2_7]"
 
 DOCS=( LICENSE.txt  )
 

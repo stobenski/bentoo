@@ -26,7 +26,7 @@ RDEPEND="dev-libs/icu
 		sys-apps/util-linux
 		sys-devel/clang
 		>=sys-libs/ncurses-5.9:5[tinfo]
-		dev-python/six[python2_7]"
+		dev-python/six[python_targets_python2_7]"
 
 DEPEND="${RDEPEND}
 		${PYTHON_DEPS}"
