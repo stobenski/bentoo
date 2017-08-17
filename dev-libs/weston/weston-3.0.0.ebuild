@@ -130,7 +130,6 @@ src_configure() {
 		$(use_enable xwayland xwayland-test) \
 		$(use_with jpeg) \
 		$(use_with webp) \
-		--disable-simple-dmabuf-intel-client \
 		--disable-simple-dmabuf-v4l-client \
 		${myconf}
 }
