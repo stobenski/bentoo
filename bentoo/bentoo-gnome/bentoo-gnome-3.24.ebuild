@@ -19,7 +19,7 @@ RDEPEND="${DEPEND}
 	>=gnome-base/gnome-session-${PV}
 	>=gnome-base/gnome-menus-3.10.1:3
 	>=gnome-base/gnome-settings-daemon-${PV}[cups?]
-	>=gnome-base/gnome-control-center-${PV}
+	>=gnome-base/gnome-control-center-${PV}[cups?]
 
 	>=app-crypt/gcr-3.20.0
 	>=gnome-base/nautilus-${PV}
@@ -58,10 +58,6 @@ RDEPEND="${DEPEND}
 		>=app-accessibility/orca-${PV}
 		>=gnome-extra/mousetweaks-3.12.0 )
 	classic? ( >=gnome-extra/gnome-shell-extensions-${PV} )
-	evolution? (
-		>=mail-client/evolution-${PV}
-		>=gnome-extra/evolution-data-server-${PV}
-	)
 	handbrake? ( media-video/handbrake )
 	extras? (
 		>=app-admin/gnome-system-log-20170611
@@ -84,7 +80,7 @@ RDEPEND="${DEPEND}
 		>=gnome-extra/sushi-3.21.91
 		>=media-gfx/gnome-font-viewer-${PV}
 		>=media-gfx/gnome-screenshot-3.22.0
-		>=media-sound/gnome-sound-recorder-3.21.92
+		>=media-sound/gnome-sound-recorder-${PV}
 		>=media-sound/sound-juicer-${PV}
 		>=media-video/cheese-${PV}
 		>=net-analyzer/gnome-nettool-3.8
@@ -92,52 +88,51 @@ RDEPEND="${DEPEND}
 		>=net-misc/vino-3.22.0
 		>=sci-geosciences/gnome-maps-${PV}
 		>=sys-apps/baobab-${PV}
-		>=sys-apps/gnome-disk-utility-${PV}
-
-		bijiben? ( >=app-misc/bijiben-${PV} )
-		boxes? ( >=gnome-extra/gnome-boxes-${PV} )
-		builder? ( >=gnome-extra/gnome-builder-${PV} )
-		california? ( >=gnome-extra/california-0.4.0 )
-		flashback? ( >=gnome-base/gnome-flashback-${PV} )
-		fonts? (
-			>=media-fonts/noto-20160305
-			>=media-fonts/symbola-8.00
-			>=media-fonts/unifont-8.0.01
-		)
-		games? (
-			>=games-arcade/gnome-nibbles-${PV}
-			>=games-arcade/gnome-robots-3.22.0
-			>=games-board/aisleriot-3.22.0
-			>=games-board/four-in-a-row-3.22.0
-			>=games-board/gnome-chess-${PV}
-			>=games-board/gnome-mahjongg-3.22.0
-			>=games-board/gnome-mines-${PV}
-			>=games-board/iagno-3.22.0
-			>=games-board/tali-3.22.0
-			>=games-puzzle/atomix-3.22.0
-			>=games-puzzle/five-or-more-3.22.0
-			>=games-puzzle/gnome2048-3.22.0
-			>=games-puzzle/gnome-klotski-3.22.0
-			>=games-puzzle/gnome-sudoku-${PV}
-			>=games-puzzle/gnome-taquin-3.22.0
-			>=games-puzzle/gnome-tetravex-3.22.0
-			>=games-puzzle/hitori-3.22.0
-			>=games-puzzle/lightsoff-${PV}
-			>=games-puzzle/quadrapassel-3.22.0
-			>=games-puzzle/swell-foop-${PV} )
-		geary? ( >=mail-client/geary-0.11.3 )
-		gnote? ( >=app-misc/gnote-${PV} )
-		latexila? ( >=app-editors/latexila-${PV} )
-		share? ( >=gnome-extra/gnome-user-share-3.18.1 )
-		shotwell? ( >=media-gfx/shotwell-0.24 )
-		todo? ( >=gnome-extra/gnome-todo-${PV} )
-		tracker? (
-			>=app-misc/tracker-1.10
-			>=gnome-extra/gnome-documents-${PV}
-			>=media-gfx/gnome-photos-${PV}
-			>=media-sound/gnome-music-${PV}
-		)
-	)
+		>=sys-apps/gnome-disk-utility-${PV} )
+	bijiben? ( >=app-misc/bijiben-${PV} )
+	boxes? ( >=gnome-extra/gnome-boxes-${PV} )
+	builder? ( >=gnome-extra/gnome-builder-${PV} )
+	california? ( >=gnome-extra/california-0.4.0 )
+	evolution? (
+		>=mail-client/evolution-${PV}
+		>=gnome-extra/evolution-data-server-${PV} )
+	flashback? ( >=gnome-base/gnome-flashback-${PV} )
+	fonts? (
+		>=media-fonts/noto-20160305
+		>=media-fonts/symbola-8.00
+		>=media-fonts/unifont-8.0.01 )
+	games? (
+		>=games-arcade/gnome-nibbles-${PV}
+		>=games-arcade/gnome-robots-3.22.0
+		>=games-board/aisleriot-3.22.0
+		>=games-board/four-in-a-row-3.22.0
+		>=games-board/gnome-chess-${PV}
+		>=games-board/gnome-mahjongg-3.22.0
+		>=games-board/gnome-mines-${PV}
+		>=games-board/iagno-3.22.0
+		>=games-board/tali-3.22.0
+		>=games-puzzle/atomix-3.22.0
+		>=games-puzzle/five-or-more-3.22.0
+		>=games-puzzle/gnome2048-3.22.0
+		>=games-puzzle/gnome-klotski-3.22.0
+		>=games-puzzle/gnome-sudoku-${PV}
+		>=games-puzzle/gnome-taquin-3.22.0
+		>=games-puzzle/gnome-tetravex-3.22.0
+		>=games-puzzle/hitori-3.22.0
+		>=games-puzzle/lightsoff-${PV}
+		>=games-puzzle/quadrapassel-3.22.0
+		>=games-puzzle/swell-foop-${PV} )
+	geary? ( >=mail-client/geary-0.11.3 )
+	gnote? ( >=app-misc/gnote-${PV} )
+	latexila? ( >=app-editors/latexila-${PV} )
+	share? ( >=gnome-extra/gnome-user-share-3.18.1 )
+	shotwell? ( >=media-gfx/shotwell-0.24 )
+	todo? ( >=gnome-extra/gnome-todo-${PV} )
+	tracker? (
+		>=app-misc/tracker-1.12
+		>=gnome-extra/gnome-documents-${PV}
+		>=media-gfx/gnome-photos-${PV}
+		>=media-sound/gnome-music-${PV} )
 "
 
 DEPEND=""
