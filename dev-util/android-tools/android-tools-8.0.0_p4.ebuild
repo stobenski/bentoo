@@ -9,7 +9,6 @@ DESCRIPTION="Android platform tools (adb and fastboot)"
 HOMEPAGE="https://sites.google.com/a/android.com/tools/"
 SRC_URI=""
 
-# Now use branch "android-7.1.1_r13"
 MY_VER="${PV/p/r}"
 MY_B="android-${MY_VER}"
 
@@ -21,7 +20,12 @@ IUSE=""
 RDEPEND="virtual/udev"
 
 DEPEND="${RDEPEND}
-	sys-devel/ipatch"
+	dev-cpp/gtest
+	dev-libs/libusb
+	dev-libs/libpcre
+	sys-devel/ipatch
+	sys-libs/libselinux
+	sys-libs/zlib"
 
 S="${WORKDIR}"
 
@@ -29,7 +33,7 @@ src_unpack() {
 	EGIT_CLONE_TYPE="mirror"
 
 	local r
-	for r in system/core system/extras external/libselinux external/f2fs-tools external/gtest external/safe-iop; do
+	for r in system/core system/extras external/f2fs-tools; do
 		EGIT_REPO_URI="https://android.googlesource.com/platform/${r}"
 		EGIT_CHECKOUT_DIR="${WORKDIR}/${r}"
 		EGIT_BRANCH="${MY_B}"
@@ -40,8 +44,9 @@ src_unpack() {
 }
 
 src_prepare() {
-	ipatch push . "${FILESDIR}"/${P}-musl-fixes.patch
+	#ipatch push . "${FILESDIR}"/${P}-musl-fixes.patch
 	ipatch push . "${FILESDIR}"/gcc7-snprintf.patch
+	ipatch push . "${FILESDIR}"/openssl.patch
 	ipatch push . "${FILESDIR}"/${P}-Makefile.patch
 
 	eapply_user
