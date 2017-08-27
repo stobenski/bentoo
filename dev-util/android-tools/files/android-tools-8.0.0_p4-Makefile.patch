@@ -2,95 +2,19 @@ This patch has been taken from the Void Linux distribution.
 
 https://github.com/voidlinux/void-packages/tree/master/srcpkgs/android-tools/patches/android-tools-musl.patch
 
-diff -Naur a/external/gtest/Makefile b/external/gtest/Makefile
---- a/external/gtest/Makefile	1970-01-01 05:00:00.000000000 +0500
-+++ b/external/gtest/Makefile	2017-01-04 22:19:02.912121861 +0500
-@@ -0,0 +1,36 @@
-+SRCS+= \
-+	src/gtest-all.cc \
-+	src/gtest-filepath.cc \
-+	src/gtest-printers.cc \
-+	src/gtest-typed-test.cc \
-+	src/gtest_main.cc \
-+	src/gtest-death-test.cc \
-+	src/gtest-port.cc \
-+	src/gtest-test-part.cc \
-+	src/gtest.cc
-+
-+
-+override CXXFLAGS+= \
-+	-I./include \
-+	-I.
-+
-+OBJS= $(SRCS:.cc=.o)
-+
-+BIN= libgtest.a
-+
-+all: $(BIN)
-+
-+$(BIN): $(OBJS)
-+	$(AR) rcs $@ $(OBJS)
-+
-+%.o: %.cc
-+	$(CXX) -c $< $(CXXFLAGS) -o $@
-+
-+.PHONY: clean mrproper
-+
-+clean:
-+	rm -rf $(OBJS)
-+
-+mrproper: clean
-+	rm -rf $(BIN)
-+
-diff -Naur a/external/libselinux/Makefile b/external/libselinux/Makefile
---- a/external/libselinux/Makefile	1970-01-01 05:00:00.000000000 +0500
-+++ b/external/libselinux/Makefile	2017-01-04 22:19:02.912121861 +0500
-@@ -0,0 +1,31 @@
-+SRCS+= \
-+	src/callbacks.c \
-+	src/check_context.c \
-+	src/freecon.c \
-+	src/init.c \
-+	src/label.c \
-+	src/label_file.c \
-+	src/label_android_property.c \
-+	src/label_support.c
-+
-+override CFLAGS+= -I./include
-+
-+OBJS= $(SRCS:.c=.o)
-+
-+BIN= libselinux.a
-+
-+all: $(BIN)
-+
-+$(BIN): $(OBJS)
-+	$(AR) rcs $@ $(OBJS)
-+
-+%.o: %.c
-+	$(CC) -c $< $(CFLAGS) -o $@
-+
-+.PHONY: clean mrproper
-+
-+clean:
-+	rm -rf $(OBJS)
-+
-+mrproper: clean
-+	rm -rf $(BIN)
 diff -Naur a/Makefile b/Makefile
 --- a/Makefile	1970-01-01 05:00:00.000000000 +0500
 +++ b/Makefile	2017-01-04 22:19:02.912121861 +0500
-@@ -0,0 +1,47 @@
+@@ -0,0 +1,44 @@
 +all:
 +	$(MAKE) -C system/core/libcutils all
-+	$(MAKE) -C external/libselinux all
++	$(MAKE) -C system/core/libcrypto_utils all
 +	$(MAKE) -C system/core/libziparchive all
 +	$(MAKE) -C system/extras/ext4_utils all
 +	$(MAKE) -C system/core/libsparse all
 +	$(MAKE) -C system/core/libutils all
 +	$(MAKE) -C system/core/liblog all
 +	$(MAKE) -C system/core/base all
-+	$(MAKE) -C external/gtest all
 +	$(MAKE) -C system/extras/f2fs_utils all
 +	$(MAKE) -C system/core/adb all
 +	$(MAKE) -C system/core/fastboot all
@@ -101,7 +25,7 @@ diff -Naur a/Makefile b/Makefile
 +
 +clean:
 +	$(MAKE) -C system/core/libcutils clean
-+	$(MAKE) -C external/libselinux clean
++	$(MAKE) -C system/core/libcrypto_utils clean
 +	$(MAKE) -C system/core/libziparchive clean
 +	$(MAKE) -C system/extras/ext4_utils clean
 +	$(MAKE) -C system/core/libsparse clean
@@ -109,14 +33,13 @@ diff -Naur a/Makefile b/Makefile
 +	$(MAKE) -C system/core/liblog clean
 +	$(MAKE) -C system/core/adb libdiagnose_usb
 +	$(MAKE) -C system/core/base clean
-+	$(MAKE) -C external/gtest clean
 +	$(MAKE) -C system/extras/f2fs_utils clean
 +	$(MAKE) -C system/core/adb clean
 +	$(MAKE) -C system/core/fastboot clean
 +
 +mrproper:
 +	$(MAKE) -C system/core/libcutils mrproper
-+	$(MAKE) -C external/libselinux mrproper
++	$(MAKE) -C system/core/libcrypto_utils mrproper
 +	$(MAKE) -C system/core/libziparchive mrproper
 +	$(MAKE) -C system/extras/ext4_utils mrproper
 +	$(MAKE) -C system/core/libsparse mrproper
@@ -124,14 +47,49 @@ diff -Naur a/Makefile b/Makefile
 +	$(MAKE) -C system/core/liblog mrproper
 +	$(MAKE) -C system/core/adb libdiagnose_usb
 +	$(MAKE) -C system/core/base mrproper
-+	$(MAKE) -C external/gtest mrproper
 +	$(MAKE) -C system/extras/f2fs_utils mrproper
 +	$(MAKE) -C system/core/adb mrproper
 +	$(MAKE) -C system/core/fastboot mrproper
+diff -Naur a/system/core/adb/adbd_auth.cpp b/system/core/adb/adbd_auth.cpp
+--- a/system/core/adb/adbd_auth.cpp  1970-01-01 05:00:00.000000000 +0500
++++ b/system/core/adb/adbd_auth.cpp  2017-01-04 22:19:02.913121849 +0500
+@@ -38,6 +38,9 @@
+ static fdevent listener_fde;
+ static fdevent framework_fde;
+ static int framework_fd = -1;
++
++void adbd_auth_verified(atransport *t);
++void send_auth_request(atransport* t);
+ 
+ static void usb_disconnected(void* unused, atransport* t);
+ static struct adisconnect usb_disconnect = { usb_disconnected, nullptr};
+diff -Naur a/system/core/adb/client/usb_libusb.cpp b/system/core/adb/client/usb_libusb.cpp
+--- a/system/core/adb/client/usb_libusb.cpp  1970-01-01 05:00:00.000000000 +0500
++++ b/system/core/adb/client/usb_libusb.cpp  2017-01-04 22:19:02.913121849 +0500
+@@ -28,6 +28,7 @@
+ #include <thread>
+ #include <unordered_map>
++#include <condition_variable>
+ 
+-#include <libusb/libusb.h>
++#include <libusb-1.0/libusb.h>
+ 
+ #include <android-base/file.h>
+diff -Naur a/system/core/adb/client/usb_linux.cpp b/system/core/adb/client/usb_linux.cpp
+--- a/system/core/adb/client/usb_linux.cpp  1970-01-01 05:00:00.000000000 +0500
++++ b/system/core/adb/client/usb_linux.cpp  2017-01-04 22:19:02.913121849 +0500
+@@ -29,6 +29,7 @@
+ #include <stdlib.h>
+ #include <string.h>
+ #include <sys/ioctl.h>
++#include <sys/sysmacros.h>
+ #include <sys/time.h>
+ #include <sys/types.h>
+ #include <unistd.h>
 diff -Naur a/system/core/adb/Makefile b/system/core/adb/Makefile
 --- a/system/core/adb/Makefile	1970-01-01 05:00:00.000000000 +0500
 +++ b/system/core/adb/Makefile	2017-01-04 22:19:02.913121849 +0500
-@@ -0,0 +1,97 @@
+@@ -0,0 +0,103 @@
 +adb_version := $(shell git -C . rev-parse --short=12 HEAD 2>/dev/null)-android
 +
 +SRCS+= \
@@ -146,20 +104,23 @@ diff -Naur a/system/core/adb/Makefile b/system/core/adb/Makefile
 +
 +LIBADB_SRCS= \
 +	adb.cpp \
-+	adb_auth.cpp \
++	adb_auth_host.cpp \
 +	adb_io.cpp \
 +	adb_listeners.cpp \
 +	adb_trace.cpp \
 +	adb_utils.cpp \
 +	fdevent.cpp \
++	socket_spec.cpp \
 +	sockets.cpp \
 +	transport.cpp \
 +	transport_local.cpp \
++	transport_mdns_unsupported.cpp \
 +	transport_usb.cpp \
-+	adb_auth_host.cpp \
-+	get_my_path_linux.cpp \
 +	sysdeps_unix.cpp \
-+	usb_linux.cpp \
++	sysdeps/errno.cpp \
++	client/usb_dispatch.cpp \
++	client/usb_libusb.cpp \
++	client/usb_linux.cpp \
 +	bugreport.cpp \
 +
 +LIBDIAGNOSE_USB_SRCS= \
@@ -170,6 +131,7 @@ diff -Naur a/system/core/adb/Makefile b/system/core/adb/Makefile
 +	-I. \
 +	-I../include \
 +	-I../base/include \
++	-I../libcrypto_utils/include \
 +	-D_Nonnull="" \
 +	-D_Nullable="" \
 +	-D_GNU_SOURCE \
@@ -189,10 +151,11 @@ diff -Naur a/system/core/adb/Makefile b/system/core/adb/Makefile
 +	./libadb.a \
 +	./libdiagnose_usb.a \
 +	../base/libbase.a \
++	../libcrypto_utils/libcrypto_utils.a \
 +	../libcutils/libcutils.a \
-+	../liblog/liblog.a
++	../liblog/liblog.a \
 +
-+override LDFLAGS+= -lssl -lcrypto -lpthread
++override LDFLAGS+= -lssl -lcrypto -lpthread -lusb-1.0 -lselinux
 +
 +OBJS= $(SRCS:.cpp=.o)
 +LIBADB_OBJS= $(LIBADB_SRCS:.cpp=.o)
@@ -241,11 +204,21 @@ diff -Naur a/system/core/base/errors_unix.cpp b/system/core/base/errors_unix.cpp
  
  namespace android {
  namespace base {
+diff -Naur a/system/core/base/file.cpp b/system/core/base/file.cpp
+--- a/system/core/base/file.cpp  2017-01-04 21:57:50.000000000 +0500
++++ b/system/core/base/file.cpp  2017-01-04 22:19:02.913121849 +0500
+@@ -25,6 +25,7 @@
+ 
+ #include <memory>
+ #include <mutex>
++#include <cstring>
+ #include <string>
+ #include <vector>
+ 
 diff -Naur a/system/core/base/logging.cpp b/system/core/base/logging.cpp
 --- a/system/core/base/logging.cpp	2017-01-04 21:57:50.000000000 +0500
 +++ b/system/core/base/logging.cpp	2017-01-04 22:19:02.913121849 +0500
-@@ -33,6 +33,7 @@
- #include <limits>
+@@ -41,5 +41,6 @@
  #include <sstream>
  #include <string>
 +#include <cstring>
@@ -255,14 +228,13 @@ diff -Naur a/system/core/base/logging.cpp b/system/core/base/logging.cpp
 diff -Naur a/system/core/base/Makefile b/system/core/base/Makefile
 --- a/system/core/base/Makefile	1970-01-01 05:00:00.000000000 +0500
 +++ b/system/core/base/Makefile	2017-01-04 22:19:02.914121836 +0500
-@@ -0,0 +1,37 @@
+@@ -0,0 +1,36 @@
 +SRCS+= \
 +	file.cpp \
 +	logging.cpp \
 +	parsenetaddress.cpp \
 +	stringprintf.cpp \
 +	strings.cpp \
-+	test_utils.cpp \
 +	errors_unix.cpp
 +
 +override CXXFLAGS+= \
@@ -296,7 +268,7 @@ diff -Naur a/system/core/base/Makefile b/system/core/base/Makefile
 diff -Naur a/system/core/fastboot/Makefile b/system/core/fastboot/Makefile
 --- a/system/core/fastboot/Makefile	1970-01-01 05:00:00.000000000 +0500
 +++ b/system/core/fastboot/Makefile	2017-01-04 22:31:15.722960465 +0500
-@@ -0,0 +1,70 @@
+@@ -0,0 +1,66 @@
 +fastboot_version := $(shell git -C . rev-parse --short=12 HEAD 2>/dev/null)-android
 +
 +SRCS+= \
@@ -310,7 +282,6 @@ diff -Naur a/system/core/fastboot/Makefile b/system/core/fastboot/Makefile
 +	udp.cpp \
 +	util.cpp \
 +	usb_linux.cpp \
-+	util_linux.cpp
 +
 +
 +override CXXFLAGS+= \
@@ -319,12 +290,11 @@ diff -Naur a/system/core/fastboot/Makefile b/system/core/fastboot/Makefile
 +	-I../libsparse/include \
 +	-I../include \
 +	-I../adb \
-+	-I../../../external/gtest/include \
 +	-I../../extras/ext4_utils \
++	-I../../extras/ext4_utils/include \
 +	-I../../extras/f2fs_utils \
 +	-Wall \
 +	-Wextra \
-+	-Werror \
 +	-Wunreachable-code \
 +	-DFASTBOOT_REVISION='"$(fastboot_version)"' \
 +	-std=gnu++14
@@ -338,12 +308,10 @@ diff -Naur a/system/core/fastboot/Makefile b/system/core/fastboot/Makefile
 +	../adb/libdiagnose_usb.a \
 +	../base/libbase.a \
 +	../libcutils/libcutils.a \
-+	../../../external/gtest/libgtest.a \
 +	../../extras/f2fs_utils/libf2fs.a \
 +	../libcutils/libcutils.a \
-+	../../../external/libselinux/libselinux.a
 +
-+override LDFLAGS+= -lz -lpcre -lpthread
++override LDFLAGS+= -lz -lpcre -lpthread -lselinux
 +
 +OBJS= $(SRCS:.cpp=.o)
 +
@@ -383,7 +351,7 @@ diff -Naur a/system/core/include/cutils/atomic.h b/system/core/include/cutils/at
  
  #ifndef ANDROID_ATOMIC_INLINE
  #define ANDROID_ATOMIC_INLINE static inline
-@@ -114,6 +119,7 @@
+@@ -123,6 +128,7 @@
      return atomic_fetch_or_explicit(a, value, memory_order_release);
  }
  
@@ -391,7 +359,7 @@ diff -Naur a/system/core/include/cutils/atomic.h b/system/core/include/cutils/at
  /*
   * Perform an atomic load with "acquire" or "release" ordering.
   *
-@@ -208,6 +214,7 @@
+@@ -217,6 +222,7 @@
                                            memory_order_release,
                                            memory_order_relaxed));
  }
@@ -399,63 +367,78 @@ diff -Naur a/system/core/include/cutils/atomic.h b/system/core/include/cutils/at
  
  /*
   * Fence primitives.
+diff -Naur a/system/core/include/cutils/trace.h b/system/core/include/cutils/trace.h
+--- a/system/core/include/cutils/trace.h	2017-01-04 21:57:50.000000000 +0500
++++ b/system/core/include/cutils/trace.h	2017-01-04 22:19:02.914121836 +0500
+@@ -18,7 +18,12 @@
+ #define _LIBS_CUTILS_TRACE_H
+ 
+ #include <inttypes.h>
++#ifdef __cplusplus
++#include <atomic>
++using namespace std;
++#else
+ #include <stdatomic.h>
++#endif
+ #include <stdbool.h>
+ #include <stdint.h>
+ #include <stdio.h>
 diff -Naur a/system/core/include/log/log.h b/system/core/include/log/log.h
 --- a/system/core/include/log/log.h	2017-01-04 21:57:50.000000000 +0500
 +++ b/system/core/include/log/log.h	2017-01-04 22:19:02.915121824 +0500
-@@ -38,6 +38,7 @@
- #include <log/uio.h>
+@@ -37,6 +37,7 @@
+ #include <log/uio.h> /* helper to define iovec for portability */
  
  #ifdef __cplusplus
 +#include <cstring>
  extern "C" {
  #endif
  
-diff -Naur a/system/core/libcutils/fs.c b/system/core/libcutils/fs.c
---- a/system/core/libcutils/fs.c	2017-01-04 21:57:50.000000000 +0500
-+++ b/system/core/libcutils/fs.c	2017-01-04 22:19:02.915121824 +0500
-@@ -79,7 +79,7 @@
- create:
-     create_result = prepare_as_dir
-         ? TEMP_FAILURE_RETRY(mkdir(path, mode))
--        : TEMP_FAILURE_RETRY(open(path, O_CREAT | O_CLOEXEC | O_NOFOLLOW | O_RDONLY));
-+        : TEMP_FAILURE_RETRY(open(path, O_CREAT | O_CLOEXEC | O_NOFOLLOW | O_RDONLY, mode));
-     if (create_result == -1) {
-         if (errno != EEXIST) {
-             ALOGE("Failed to %s(%s): %s",
+diff -Naur a/system/core/libcrypto_utils/Makefile b/system/core/libcrypto_utils/Makefile
+--- a/system/core/libcrypto_utils/Makefile	1970-01-01 05:00:00.000000000 +0500
++++ b/system/core/libcrypto_utils/Makefile	2017-01-04 22:19:02.915121824 +0500
+@@ -0,0 +0,24 @@
++SRCS+= \
++	android_pubkey.c
++
++override CFLAGS+= -Iinclude 
++
++OBJS= $(SRCS:.c=.o)
++BIN= libcrypto_utils.a
++
++all: $(BIN)
++
++$(BIN): $(OBJS)
++	$(AR) rcs $@ $(OBJS)
++
++%.o: %.c
++	$(CC) -c $< $(CFLAGS) -o $@
++
++.PHONY: clean mrproper
++
++clean:
++	rm -rf $(OBJS)
++
++mrproper: clean
++	rm -rf $(BIN)
++
 diff -Naur a/system/core/libcutils/Makefile b/system/core/libcutils/Makefile
 --- a/system/core/libcutils/Makefile	1970-01-01 05:00:00.000000000 +0500
 +++ b/system/core/libcutils/Makefile	2017-01-04 22:19:02.915121824 +0500
-@@ -0,0 +1,59 @@
+@@ -0,0 +1,42 @@
 +CSRCS+= \
-+	config_utils.c \
-+	fs_config.c \
-+	canned_fs_config.c \
-+	hashmap.c \
-+	iosched_policy.c \
 +	load_file.c \
-+	native_handle.c \
-+	open_memstream.c \
-+	process_name.c \
-+	record_stream.c \
-+	sched_policy.c \
-+	strlcpy.c \
 +	threads.c \
-+	fs.c \
-+	multiuser.c \
 +	socket_inaddr_any_server_unix.c \
 +	socket_local_client_unix.c \
 +	socket_local_server_unix.c \
-+	socket_loopback_client_unix.c \
 +	socket_loopback_server_unix.c \
-+	socket_network_client_unix.c \
-+	str_parms.c \
-+	ashmem-host.c \
-+	trace-host.c \
-+	dlmalloc_stubs.c
++	socket_network_client_unix.c
 +
 +CXXSRCS+= \
 +	sockets_unix.cpp \
-+	sockets.cpp
++	sockets.cpp \
++	android_get_control_file.cpp
 +
 +override CFLAGS+= -I../include
 +
@@ -488,70 +471,65 @@ diff -Naur a/system/core/libcutils/Makefile b/system/core/libcutils/Makefile
 diff -Naur a/system/core/liblog/Makefile b/system/core/liblog/Makefile
 --- a/system/core/liblog/Makefile	1970-01-01 05:00:00.000000000 +0500
 +++ b/system/core/liblog/Makefile	2017-01-04 22:19:02.915121824 +0500
-@@ -0,0 +1,39 @@
-+SRCS+= \
+@@ -0,0 +1,58 @@
++CSRCS+= \
 +	log_event_list.c \
 +	log_event_write.c \
 +	logger_write.c \
 +	config_write.c \
++	stderr_write.c \
 +	logger_name.c \
++	config_read.c \
 +	logger_lock.c \
 +	fake_log_device.c \
 +	fake_writer.c \
-+	event_tag_map.c
++	local_logger.c \
++	logprint.c
 +
++CXXSRCS+= \
++	event_tag_map.cpp
 +
 +override CFLAGS+= \
 +	-I../include \
++	-Iinclude \
 +	-DLIBLOG_LOG_TAG=1005 \
 +	-DSNET_EVENT_LOG_TAG=1397638484 \
 +	-DFAKE_LOG_DEVICE=1 \
 +	-Werror \
 +	-fvisibility=hidden
 +
-+OBJS= $(SRCS:.c=.o)
++override CXXFLAGS+= \
++	-I../include \
++	-Iinclude \
++	-DLIBLOG_LOG_TAG=1005 \
++	-DSNET_EVENT_LOG_TAG=1397638484 \
++	-DFAKE_LOG_DEVICE=1 \
++	-Werror \
++	-fvisibility=hidden
++	-std=gnu++14
 +
++COBJS= $(CSRCS:.c=.o)
++CXXOBJS= $(CXXSRCS:.cpp=.o)
 +BIN= liblog.a
 +
 +all: $(BIN)
 +
-+$(BIN): $(OBJS)
-+	$(AR) rcs $@ $(OBJS)
++$(BIN): $(COBJS) $(CXXOBJS)
++	$(AR) rcs $@ $(COBJS) $(CXXOBJS)
 +
 +%.o: %.c
 +	$(CC) -c $< $(CFLAGS) -o $@
++
++%.o: %.cpp
++	$(CXX) -c $< $(CXXFLAGS) -o $@
 +
 +.PHONY: clean mrproper
 +
 +clean:
-+	rm -rf $(OBJS)
++	rm -rf $(COBJS) $(CXXOBJS)
 +
 +mrproper: clean
 +	rm -rf $(BIN)
-diff -Naur a/system/core/libpackagelistparser/Makefile b/system/core/libpackagelistparser/Makefile
---- a/system/core/libpackagelistparser/Makefile	1970-01-01 05:00:00.000000000 +0500
-+++ b/system/core/libpackagelistparser/Makefile	2017-01-04 22:19:02.916121811 +0500
-@@ -0,0 +1,20 @@
-+SRCS+= \
-+	packagelistparser.c
-+
-+override CFLAGS+= -I../include
-+override CFLAGS+= -I./include
-+
-+OBJS= $(SRCS:.c=.o)
-+
-+BIN= libpackagelistparser.a
-+
-+all: $(BIN)
-+
-+$(BIN): $(OBJS)
-+	$(AR) rcs $@ $(OBJS)
-+
-+%.o: %.c
-+	$(CC) -c $< $(CFLAGS) -o $@
-+
-+clean:
-+	rm -rf *.o
 diff -Naur a/system/core/libsparse/Makefile b/system/core/libsparse/Makefile
 --- a/system/core/libsparse/Makefile	1970-01-01 05:00:00.000000000 +0500
 +++ b/system/core/libsparse/Makefile	2017-01-04 22:19:02.916121811 +0500
@@ -590,29 +568,12 @@ diff -Naur a/system/core/libsparse/Makefile b/system/core/libsparse/Makefile
 diff -Naur a/system/core/libutils/Makefile b/system/core/libutils/Makefile
 --- a/system/core/libutils/Makefile	1970-01-01 05:00:00.000000000 +0500
 +++ b/system/core/libutils/Makefile	2017-01-04 22:24:10.702273955 +0500
-@@ -0,0 +1,44 @@
+@@ -0,0 +1,27 @@
 +SRCS+= \
-+	FileMap.cpp \
-+	JenkinsHash.cpp \
-+	LinearTransform.cpp \
-+	Log.cpp \
-+	NativeHandle.cpp \
-+	Printer.cpp \
-+	SharedBuffer.cpp \
-+	Static.cpp \
-+	StopWatch.cpp \
-+	String8.cpp \
-+	String16.cpp \
-+	SystemClock.cpp \
-+	Threads.cpp \
-+	Timers.cpp \
-+	Tokenizer.cpp \
-+	Unicode.cpp \
-+	VectorImpl.cpp \
++	FileMap.cpp
 +
 +override CXXFLAGS+= \
 +	-I../include \
-+	-I../../../external/safe-iop/include \
 +	-DLIBUTILS_NATIVE=1 \
 +	-std=gnu++14
 +
@@ -638,11 +599,9 @@ diff -Naur a/system/core/libutils/Makefile b/system/core/libutils/Makefile
 diff -Naur a/system/core/libziparchive/Makefile b/system/core/libziparchive/Makefile
 --- a/system/core/libziparchive/Makefile	1970-01-01 05:00:00.000000000 +0500
 +++ b/system/core/libziparchive/Makefile	2017-01-04 22:19:02.916121811 +0500
-@@ -0,0 +1,34 @@
+@@ -0,0 +1,32 @@
 +SRCS+= \
 +	zip_archive.cc \
-+	zip_archive_stream_entry.cc \
-+	zip_writer.cc \
 +
 +override CXXFLAGS+= \
 +	-I./include \
@@ -673,17 +632,6 @@ diff -Naur a/system/core/libziparchive/Makefile b/system/core/libziparchive/Make
 +
 +mrproper: clean
 +	rm -rf $(BIN)
-diff -Naur a/system/core/libziparchive/zip_writer.cc b/system/core/libziparchive/zip_writer.cc
---- a/system/core/libziparchive/zip_writer.cc	2017-01-04 21:57:50.000000000 +0500
-+++ b/system/core/libziparchive/zip_writer.cc	2017-01-04 22:19:02.917121799 +0500
-@@ -24,6 +24,7 @@
- 
- #include <cassert>
- #include <cstdio>
-+#include <cstring>
- #include <memory>
- #include <vector>
- #include <zlib.h>
 diff -Naur a/system/extras/ext4_utils/Makefile b/system/extras/ext4_utils/Makefile
 --- a/system/extras/ext4_utils/Makefile	1970-01-01 05:00:00.000000000 +0500
 +++ b/system/extras/ext4_utils/Makefile	2017-01-04 22:20:12.669249777 +0500
@@ -704,7 +652,7 @@ diff -Naur a/system/extras/ext4_utils/Makefile b/system/extras/ext4_utils/Makefi
 +override CFLAGS+= \
 +	-I../../core/libsparse/include \
 +	-I../../core/include \
-+	-I../../../external/libselinux/include \
++	-Iinclude \
 +	-fno-strict-aliasing
 +
 +OBJS= $(SRCS:.c=.o)
@@ -749,18 +697,16 @@ diff -Naur a/system/extras/f2fs_utils/f2fs_utils.c b/system/extras/f2fs_utils/f2
 diff -Naur a/system/extras/f2fs_utils/Makefile b/system/extras/f2fs_utils/Makefile
 --- a/system/extras/f2fs_utils/Makefile	1970-01-01 05:00:00.000000000 +0500
 +++ b/system/extras/f2fs_utils/Makefile	2017-01-04 22:26:56.155205508 +0500
-@@ -0,0 +1,34 @@
+@@ -0,0 +1,31 @@
 +SRCS+= \
 +	f2fs_utils.c \
 +	f2fs_ioutils.c \
 +	f2fs_dlutils.c
 +
-+
 +override CFLAGS+= \
 +	-I../../../external/f2fs-tools/include \
 +	-I../../../external/f2fs-tools/mkfs \
 +	-I../../core/libsparse/include \
-+	-I../../../external/libselinux/include \
 +	-Wno-unused-parameter
 +
 +OBJS= $(SRCS:.c=.o)
@@ -782,5 +728,4 @@ diff -Naur a/system/extras/f2fs_utils/Makefile b/system/extras/f2fs_utils/Makefi
 +
 +mrproper: clean
 +	rm -rf $(BIN)
-+
 +
