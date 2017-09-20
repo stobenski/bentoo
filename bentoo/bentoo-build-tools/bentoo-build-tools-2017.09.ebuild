@@ -9,7 +9,7 @@ KEYWORDS="amd64 arm x86"
 SLOT="0"
 LICENSE="GPL-3"
 
-GCC_VER="5.4.0"
+GCC_VER="7.2.0"
 PYTHON_VER="2.7"
 
 RDEPEND="app-arch/bzip2
