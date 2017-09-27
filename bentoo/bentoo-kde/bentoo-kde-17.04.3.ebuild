@@ -7,7 +7,7 @@ DESCRIPTION="Bentoo kde meta ebuild"
 HOMEPAGE="https://bitbucket.org/redeyeteam/bentoo"
 SLOT="0"
 LICENSE="GPL-3"
-IUSE="addons bluetooth filelight kamera kgpg kdialog kdepim kmix kpat krusader ksystemlog kwalletmanager kwalletpam networkmanager okular telepathy touchpad"
+IUSE="addons bluetooth filelight kamera kgpg kdialog kdeconnect kdepim kmix kpat krusader ksystemlog kwalletmanager kwalletpam networkmanager okular telepathy touchpad"
 
 KLV="17.12.50"
 
@@ -59,6 +59,7 @@ RDEPEND="${DEPEND}
 	kamera? ( <kde-apps/kamera-${KLV} )
 	kgpg? ( <kde-apps/kgpg-${KLV} )
 	kdialog? ( <kde-apps/kdialog-${KLV} )
+	kdeconnect? ( kde-misc/kdeconnect )
 	kdepim? ( <kde-apps/kdepim-meta-${KLV} )
 	kmix? ( <kde-apps/kmix-${KLV} )
 	kpat? ( <kde-apps/kpat-${KLV} )
