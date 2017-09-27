@@ -99,6 +99,7 @@ RDEPEND="${DEPEND}
 	rxvt? ( bentoo/bentoo-rxvt )
 	x11-misc/xdg-user-dirs
 	x11-misc/xdg-user-dirs-gtk
+	sys-auth/pam_mount
 	"
 
 src_install() {
