@@ -65,6 +65,8 @@ RDEPEND="${DEPEND}
 	net-misc/ntp
 	net-misc/youtube-dl
 	net-p2p/transmission
+	net-vpn/openvpn
+	net-wireless/rfkill
 	sys-apps/gptfdisk
 	sys-apps/hdparm
 	sys-apps/lm_sensors
@@ -74,10 +76,12 @@ RDEPEND="${DEPEND}
 	sys-apps/pv
 	sys-apps/smartmontools
 	sys-apps/usbutils
+	sys-auth/pam_mount
 	sys-devel/ipatch
 	sys-fs/cryptsetup
 	sys-fs/dosfstools
 	lvm? ( sys-fs/lvm2 )
+	sys-fs/ntfs3g
 	sys-fs/squashfs-tools
 	udf? ( sys-fs/udftools )
 	livecd? ( sys-kernel/linux-firmware )
@@ -99,7 +103,6 @@ RDEPEND="${DEPEND}
 	rxvt? ( bentoo/bentoo-rxvt )
 	x11-misc/xdg-user-dirs
 	x11-misc/xdg-user-dirs-gtk
-	sys-auth/pam_mount
 	"
 
 src_install() {
