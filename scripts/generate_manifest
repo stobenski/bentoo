@@ -25,7 +25,7 @@ for file in $(find `pwd` \( -name "*.ebuild" -o -name "ChangeLog" \)); do
 #	echo "`cat ${PORTDIR}/header.txt`" > "${file}";
 	echo "`cat ${REPO_ROOT}/header.txt`" > "${file}";
 	echo "" >> "${file}";
-	echo "`sed '1,4d' "${file}~"`" >> "${file}";
+	echo "`sed '1,3d' "${file}~"`" >> "${file}";
 	rm -rf "${file}~";
 done;
 

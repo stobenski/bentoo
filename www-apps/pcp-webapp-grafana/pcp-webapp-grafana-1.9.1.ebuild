@@ -36,4 +36,3 @@ pkg_postinst() {
 	echo
 	elog "URL: http://localhost:44323/grafana"
 }
-
