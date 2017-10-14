@@ -52,6 +52,7 @@ RDEPEND="${DEPEND}
 	bentoo/bentoo-irssi
 	bentoo/bentoo-syslog-ng
 	bentoo/bentoo-version
+	dev-libs/elfutils
 	dev-util/dialog
 	dev-vcs/git
 	dev-vcs/git-flow
@@ -101,6 +102,7 @@ RDEPEND="${DEPEND}
 	|| ( sys-process/vixie-cron virtual/cron )
 	optimus? ( video_cards_nvidia? ( x11-misc/bumblebee ) )
 	rxvt? ( bentoo/bentoo-rxvt )
+	x11-apps/mesa-progs
 	x11-misc/xdg-user-dirs
 	x11-misc/xdg-user-dirs-gtk
 	"
