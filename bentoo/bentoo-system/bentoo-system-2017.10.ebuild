@@ -67,7 +67,6 @@ RDEPEND="${DEPEND}
 	net-misc/youtube-dl
 	net-p2p/transmission
 	net-vpn/openvpn
-	net-wireless/rfkill
 	sys-apps/gptfdisk
 	sys-apps/hdparm
 	sys-apps/lm_sensors
