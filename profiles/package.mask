@@ -1,4 +1,3 @@
 # Don't let people install these accidentally
 =app-portage/ibashrc-9999
 =sys-devel/ipatch-9999
-=www-plugins/youtube_center-9999
