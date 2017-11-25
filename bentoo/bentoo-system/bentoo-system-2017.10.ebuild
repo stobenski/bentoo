@@ -37,6 +37,7 @@ RDEPEND="${DEPEND}
 	app-arch/unrar
 	app-arch/unzip
 	app-arch/xz-utils
+	app-cdr/iat
 	app-crypt/gnupg
 	app-misc/mc
 	app-misc/tmux
@@ -67,6 +68,7 @@ RDEPEND="${DEPEND}
 	net-misc/youtube-dl
 	net-p2p/transmission
 	net-vpn/openvpn
+	net-wireless/iw
 	sys-apps/gptfdisk
 	sys-apps/hdparm
 	sys-apps/lm_sensors
@@ -85,7 +87,7 @@ RDEPEND="${DEPEND}
 	sys-fs/squashfs-tools
 	udf? ( sys-fs/udftools )
 	livecd? ( sys-kernel/linux-firmware )
-	!arm? ( !livecd-stage1? ( sys-kernel/genkernel-next || ( sys-boot/grub:0 sys-boot/grub-static sys-boot/grub:2 ) ) )
+	!arm? ( !livecd-stage1? ( || ( sys-boot/grub:0 sys-boot/grub-static sys-boot/grub:2 ) ) )
 	!arm? ( sys-kernel/bentoo-sources sys-kernel/bentoo-kernel )
 	zfs? ( !livecd-stage1? ( amd64? ( !pax_kernel? ( sys-fs/zfs ) ) ) )
 	!livecd-stage1? ( video_cards_virtualbox? ( app-emulation/virtualbox-guest-additions ) )
@@ -123,10 +125,6 @@ src_install() {
 	#/etc
 	insinto /etc
 	newins "${FILESDIR}"/motd-${PV} motd
-
-	#/etc/portage/postsync.d
-	exeinto /etc/portage/postsync.d
-	doexe "${FILESDIR}"/layman-sync
 
 	if [ ! -e "${EROOT}/etc/env.d/02locale" ]
 	then
