@@ -3,30 +3,52 @@
 
 EAPI="6"
 
-inherit eutils autotools
+PYTHON_COMPAT=( python3_{4,5,6} )
 
-DESCRIPTION="library for manipulating and storing storage volume encryption keys"
-HOMEPAGE="https://pagure.io/volume_key/"
+inherit autotools python-single-r1
+
+DESCRIPTION="Library for manipulating and storing storage volume encryption keys"
+HOMEPAGE="https://pagure.io/volume_key"
 SRC_URI="https://releases.pagure.org/${PN}/${P}.tar.xz"
 
 LICENSE="GPL-2+"
 SLOT="0"
-KEYWORDS="~amd64"
-IUSE=""
+KEYWORDS="~amd64 ~x86"
+IUSE="test"
 
-DEPEND="sys-devel/autoconf:2.63"
+REQUIRED_USE="${PYTHON_REQUIRED_USE}"
+
 RDEPEND="
 	app-crypt/gpgme
-	dev-libs/glib
-	dev-libs/nss
 	dev-libs/glib:2
+	dev-libs/nspr
+	dev-libs/nss
+	sys-apps/util-linux
+	sys-fs/cryptsetup:=
+"
+DEPEND="
+	${RDEPEND}
 	sys-devel/gettext
-	sys-apps/util-linux"
+	test? ( dev-libs/nss[utils] )
+	"
+
+RESTRICT="test" # possible gpgme issue
+
+PATCHES=(
+	"${FILESDIR}/${P}-fips-crash.patch"
+
+	"${FILESDIR}/${P}-config.h.patch"
+	"${FILESDIR}/${PN}-0.3.9-find_python.patch"
+
+	# Patches from upstream (can usually be removed with next version bump)
+	"${FILESDIR}/${P}-cryptsetup2.patch"
+)
+
+pkg_setup() {
+	python-single-r1_pkg_setup
+}
 
 src_prepare() {
-	ipatch push . "${FILESDIR}/${P}-fips-crash.patch"
-	ipatch push . "${FILESDIR}/${P}-config.h.patch"
-	ipatch push . "${FILESDIR}/${P}-translation-updates.patch"
-	eapply_user
+	default
 	eautoreconf
 }
