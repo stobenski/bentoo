@@ -14,6 +14,7 @@ RDEPEND="${DEPEND}
 	www-client/lynx
 	chromium? (
 		www-client/chromium
+		bentoo/bentoo-browser-plugins[chromium]
 	)
 	firefox? (
 		|| ( www-client/firefox www-client/firefox-bin )
@@ -26,5 +27,6 @@ RDEPEND="${DEPEND}
 	)
 	kde? (
 		kde-apps/konqueror
+		bentoo/bentoo-browser-plugins[kde]
 	)
 	"
