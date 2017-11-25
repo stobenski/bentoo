@@ -3,20 +3,19 @@
 
 EAPI="6"
 
-inherit eutils toolchain-funcs versionator multilib-minimal
+inherit autotools multilib-minimal toolchain-funcs
 
-MY_PV=$(get_major_version)-$(get_after_major_version)
+MY_PV=${PV/./-}
 MY_P=${PN}-${MY_PV}
 
 DESCRIPTION="BSD replacement for libreadline"
-HOMEPAGE="http://www.thrysoee.dk/editline/"
-SRC_URI="http://www.thrysoee.dk/editline/${MY_P}.tar.gz"
+HOMEPAGE="http://thrysoee.dk/editline/"
+SRC_URI="http://thrysoee.dk/editline/${MY_P}.tar.gz"
 
 LICENSE="BSD-2"
 SLOT="0"
-
 KEYWORDS="~amd64 ~arm ~x86"
-IUSE="examples static-libs"
+IUSE="static-libs"
 
 DEPEND=">=sys-libs/ncurses-5.9-r3[static-libs?,${MULTILIB_USEDEP}]
 	!<=sys-freebsd/freebsd-lib-6.2_rc1"
@@ -26,14 +25,20 @@ RDEPEND=${DEPEND}
 S="${WORKDIR}/${MY_P}"
 
 PATCHES=(
-	"${FILESDIR}/${PN}-ncursesprivate.patch"
-	)
+	"${FILESDIR}/${P}-ncursesprivate.patch"
+	"${FILESDIR}/${P}-el_fn_sh_complete.patch"
+	"${FILESDIR}/${P}-tinfo.patch"
+)
+
+src_prepare() {
+	default
+	eautoreconf
+}
 
 multilib_src_configure() {
 	ECONF_SOURCE="${S}" econf \
-		$(use_enable examples) \
 		$(use_enable static-libs static) \
-		--mandir=${EROOT}/usr/share/libedit \
+		--enable-widec \
 		--enable-fast-install
 }
 
@@ -44,5 +49,7 @@ multilib_src_install() {
 
 multilib_src_install_all() {
 	einstalldocs
-	prune_libtool_files --all
+	find "${D}" -name '*.la' -delete || die
+	# file collission with sys-libs/readline
+	rm "${ED%/}/usr/share/man/man3/history.3" || die
 }
