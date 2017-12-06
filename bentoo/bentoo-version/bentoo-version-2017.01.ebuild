@@ -9,7 +9,7 @@ DESCRIPTION="Bentoo system release virtual package"
 HOMEPAGE="https://bitbucket.org/redeyeteam/bentoo"
 SRC_URI=""
 
-LICENSE="GPL-2"
+LICENSE="metapackage"
 SLOT="0"
 KEYWORDS="~amd64 ~arm ~x86"
 

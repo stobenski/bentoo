@@ -6,7 +6,7 @@ DESCRIPTION="Bentoo meta ebuild to install all apps"
 HOMEPAGE="https://bitbucket.org/redeyeteam/bentoo"
 KEYWORDS="amd64 arm x86"
 SLOT="0"
-LICENSE="GPL-3"
+LICENSE="metapackage"
 IUSE="enlightenment exploit gnome kde lxqt mate +mobile +pelican proxie xfce wine cockpit steam"
 
 DEPEND=""

@@ -7,10 +7,10 @@ DESCRIPTION="Bentoo system meta ebuild"
 HOMEPAGE="https://bitbucket.org/redeyeteam/bentoo"
 KEYWORDS="amd64 arm x86"
 SLOT="0"
-LICENSE="GPL-3"
+LICENSE="metapackage"
 
 IUSE_VIDEO_CARDS="video_cards_nvidia video_cards_virtualbox video_cards_vmware"
-IUSE="livecd livecd-stage1 lvm -optimus pax_kernel +rxvt +udf qemu zfs ${IUSE_VIDEO_CARDS}"
+IUSE="livecd livecd-stage1 lvm -optimus -pax_kernel +rxvt +udf qemu zfs ${IUSE_VIDEO_CARDS}"
 
 S="${WORKDIR}"
 

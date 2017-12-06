@@ -6,7 +6,7 @@ DESCRIPTION="Bentoo firmware meta ebuild"
 HOMEPAGE="https://bitbucket.org/redeyeteam/bentoo"
 KEYWORDS="amd64 arm x86"
 SLOT="0"
-LICENSE="GPL-3"
+LICENSE="metapackage"
 IUSE="b43 intel nouveau vdpau"
 
 DEPEND=""

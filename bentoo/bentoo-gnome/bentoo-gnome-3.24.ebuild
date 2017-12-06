@@ -7,7 +7,7 @@ KEYWORDS="~amd64 ~arm ~x86"
 DESCRIPTION="Bentoo gnome meta ebuild"
 HOMEPAGE="https://bitbucket.org/redeyeteam/bentoo"
 SLOT="0"
-LICENSE="GPL-3"
+LICENSE="metapackage"
 IUSE="accessibility +bluetooth +classic +cdr cups gnote python evolution +extras handbrake latexila +bijiben boxes builder california flashback +fonts +games geary +share +shotwell +todo +tracker"
 
 RDEPEND="${DEPEND}
