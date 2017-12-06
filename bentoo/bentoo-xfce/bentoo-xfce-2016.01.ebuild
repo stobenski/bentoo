@@ -6,7 +6,7 @@ KEYWORDS="amd64 arm x86"
 DESCRIPTION="Bentoo xfce meta ebuild"
 HOMEPAGE="https://bitbucket.org/redeyeteam/bentoo"
 SLOT="0"
-LICENSE="GPL-3"
+LICENSE="metapackage"
 IUSE="bluetooth +cdr pulseaudio"
 
 DEPEND=""

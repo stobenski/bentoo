@@ -7,7 +7,7 @@ DESCRIPTION="things needed by bentoo for livecd only"
 HOMEPAGE="https://bitbucket.org/redeyeteam/bentoo"
 SRC_URI=""
 
-LICENSE="GPL-3"
+LICENSE="metapackage"
 SLOT="0"
 KEYWORDS="arm amd64 x86"
 IUSE="livecd"

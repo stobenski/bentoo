@@ -6,7 +6,7 @@ DESCRIPTION="Bentoo xorg meta ebuild"
 HOMEPAGE="https://bitbucket.org/redeyeteam/bentoo"
 KEYWORDS="amd64 arm x86"
 SLOT="0"
-LICENSE="GPL-3"
+LICENSE="metapackage"
 
 IUSE_INPUT_DEVICES="keyboard mouse synaptics"
 IUSE_VIDEO_CARDS="nouveau nvidia"

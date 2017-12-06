@@ -7,7 +7,7 @@ DESCRIPTION="Tools for building C and C++ programs."
 HOMEPAGE="https://bitbucket.org/redeyeteam/bentoo"
 KEYWORDS="amd64 arm x86"
 SLOT="0"
-LICENSE="GPL-3"
+LICENSE="metapackage"
 
 GCC_VER="7.2.0"
 PYTHON_VER="2.7"
