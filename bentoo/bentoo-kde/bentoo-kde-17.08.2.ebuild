@@ -22,7 +22,6 @@ RDEPEND="${DEPEND}
 	<kde-apps/gwenview-${KLV}
 	<kde-apps/kate-${KLV}
 	<kde-apps/kcalc-${KLV}
-	<kde-apps/kompare-${KLV}
 	<kde-apps/konsole-${KLV}
 	<kde-apps/spectacle-${KLV}
 
