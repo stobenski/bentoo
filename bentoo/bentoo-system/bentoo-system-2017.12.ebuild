@@ -10,7 +10,7 @@ SLOT="0"
 LICENSE="metapackage"
 
 IUSE_VIDEO_CARDS="video_cards_nvidia video_cards_virtualbox video_cards_vmware"
-IUSE="livecd livecd-stage1 lvm -optimus -pax_kernel +rxvt +udf qemu zfs ${IUSE_VIDEO_CARDS}"
+IUSE="btrfs livecd livecd-stage1 lvm -optimus -pax_kernel +rxvt thinkpad +udf qemu zfs ${IUSE_VIDEO_CARDS}"
 
 S="${WORKDIR}"
 
@@ -55,6 +55,7 @@ RDEPEND="${DEPEND}
 	bentoo/bentoo-version
 	dev-libs/elfutils
 	dev-util/dialog
+	dev-util/meld
 	dev-vcs/git
 	dev-vcs/git-flow
 	mail-filter/procmail
@@ -79,8 +80,10 @@ RDEPEND="${DEPEND}
 	sys-apps/smartmontools
 	sys-apps/usbutils
 	sys-auth/pam_mount
+	sys-block/gparted
 	sys-devel/ipatch
 	sys-fs/cryptsetup
+	btrfs? ( sys-fs/btrfs-progs )
 	sys-fs/dosfstools
 	lvm? ( sys-fs/lvm2 )
 	sys-fs/ntfs3g
@@ -88,7 +91,7 @@ RDEPEND="${DEPEND}
 	udf? ( sys-fs/udftools )
 	livecd? ( sys-kernel/linux-firmware )
 	!arm? ( !livecd-stage1? ( || ( sys-boot/grub:0 sys-boot/grub-static sys-boot/grub:2 ) ) )
-	!arm? ( sys-kernel/bentoo-sources sys-kernel/bentoo-kernel )
+	!arm? ( sys-kernel/bentoo-sources )
 	zfs? ( !livecd-stage1? ( amd64? ( !pax_kernel? ( sys-fs/zfs ) ) ) )
 	!livecd-stage1? ( video_cards_virtualbox? ( app-emulation/virtualbox-guest-additions ) )
 	sys-libs/gpm
@@ -101,6 +104,7 @@ RDEPEND="${DEPEND}
 	sys-process/lsof
 	sys-process/time
 	|| ( sys-process/vixie-cron virtual/cron )
+	thinkpad? ( app-laptop/thinkfan )
 	optimus? ( video_cards_nvidia? ( x11-misc/bumblebee ) )
 	rxvt? ( bentoo/bentoo-rxvt )
 	x11-apps/mesa-progs
