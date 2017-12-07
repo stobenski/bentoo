@@ -1,3 +1,0 @@
-sys-libs/e2fsprogs-libs static-libs
-sys-libs/talloc python
-sys-libs/zlib minizip

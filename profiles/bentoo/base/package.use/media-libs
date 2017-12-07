@@ -1,7 +1,0 @@
-media-libs/gd truetype fontconfig
-media-libs/gst-plugins-base theora
-media-libs/harfbuzz icu
-media-libs/libcanberra gstreamer
-media-libs/libpng apng
-media-libs/libvpx postproc
-media-libs/mesa gbm pic xa
