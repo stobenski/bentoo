@@ -1,2 +1,0 @@
-x11-libs/cairo glib svg -static-libs
-x11-libs/libdrm libkms

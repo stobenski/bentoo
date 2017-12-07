@@ -1,0 +1,9 @@
+app-editors/vim-core livecd
+app-emulation/wine opencl
+dev-libs/openssl bindist
+dev-qt/qtnetwork bindist
+media-libs/mesa opencl
+net-misc/openssh bindist
+sys-apps/portage build
+sys-fs/zfs -kernel-builtin
+x11-drivers/nvidia-drivers -X -tools

@@ -1,2 +1,0 @@
-sys-fs/cryptsetup pwquality reencrypt static-libs
-sys-fs/lvm2 static-libs

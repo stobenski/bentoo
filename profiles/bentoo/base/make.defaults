@@ -9,12 +9,12 @@ LDFLAGS="${LDFLAGS} -Wl,--hash-style=gnu"
 
 #Adding -frecord-gcc-switches to help track down packages which don't respect *FLAGS
 #should probably leave a note in /etc/portage/make.conf about keeping this when override
-CFLAGS="${CFLAGS} -frecord-gcc-switches -fdiagnostics-color=always"
-CXXFLAGS="${CXXFLAGS} -frecord-gcc-switches -fdiagnostics-color=always"
-FFLAGS="${FFLAGS} -frecord-gcc-switches -fdiagnostics-color=always"
-FCFLAGS="${FCFLAGS} -frecord-gcc-switches -fdiagnostics-color=always"
+CFLAGS="${CFLAGS} -frecord-gcc-switches"
+CXXFLAGS="${CXXFLAGS} -frecord-gcc-switches"
+FFLAGS="${FFLAGS} -frecord-gcc-switches"
+FCFLAGS="${FCFLAGS} -frecord-gcc-switches"
 
-FEATURES="${FEATURES} usersandbox protect-owned userpriv userfetch fixlafiles news parallel-fetch sfperms unmerge-orphans unknown-features-warn usersync multilib-strict preserve-libs"
+FEATURES="${FEATURES} usersandbox protect-owned userpriv userfetch fixlafiles news parallel-fetch sfperms unmerge-orphans unknown-features-warn usersync multilib-strict preserve-libs compress-build-logs"
 
 #for major use of binpkgs, we need to "fix" a few of gentoo's flaws:
 #a package built against kernel A will attempt to be used even when remerging on kernel B (often to hilarious consequences)
@@ -35,11 +35,15 @@ PORTAGE_ELOG_CLASSES="${PORTAGE_ELOG_CLASSES} qa"
 PORTAGE_NICENESS="9"
 PORTAGE_IO_NICENESS="ionice -c 3 -p \${PID}"
 
-RUBY_TARGETS="ruby20 ruby21"
+RUBY_TARGETS="ruby24"
 
 USE="${USE} X abi_x86_32 adns caps curl lm_sensors lua lzma perl pulseaudio python sqlite xattr xinerama"
 
-#PORTAGE_BZIP2_COMMAND="lbzip2"
+PORTAGE_BZIP2_COMMAND="lbzip2"
+PORTAGE_BUNZIP2_COMMAND="lbunzip2"
+PORTAGE_COMPRESS="xz"
+# wait for sys-apps/portage-2.3.12 to have been stable one month
+BINPKG_COMPRESS="xz"
 
 #mgorny suggested this speeds up sync, in my testing it makes a rather large difference
 PORTAGE_RSYNC_EXTRA_OPTS="--omit-dir-times"

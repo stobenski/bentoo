@@ -1,3 +1,0 @@
-virtual/libgudev static-libs
-virtual/libudev static-libs
-virtual/mpi threads

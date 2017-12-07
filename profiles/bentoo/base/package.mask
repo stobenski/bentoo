@@ -1,0 +1,9 @@
+>net-wireless/hostapd-2.1
+sys-fs/eudev
+<sys-kernel/genkernel-3.4.52.2
+
+dev-lang/ruby:2.1
+dev-lang/ruby:2.2
+
+#ugh, https://bugs.gentoo.org/627576
+<dev-libs/elfutils-0.170-r1
