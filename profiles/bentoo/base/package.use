@@ -66,7 +66,7 @@ dev-qt/qtsql:5 postgres sqlite
 dev-qt/qtsql -mysql postgres
 dev-qt/qtwebchannel qml
 dev-qt/qtwebengine widgets -system-ffmpeg -system-icu
-dev-qt/qtwebkit icu
+dev-qt/qtwebkit icu multimedia webchannel webp
 dev-ruby/activerecord postgres
 dev-ruby/did_you_mean ruby_targets_ruby24
 dev-ruby/json ruby_targets_ruby24
@@ -207,6 +207,7 @@ virtual/libudev static-libs
 virtual/linux-sources -firmware
 virtual/mpi threads
 virtual/rubygems ruby_targets_ruby24
+www-client/qupzilla dbus kwallet
 www-client/chromium -system-ffmpeg -system-icu widevine
 www-client/firefox dbus gmp-autoupdate hardened l10n_it wifi system-jpeg
 x11-base/xorg-server xvfb kdrive
