@@ -86,10 +86,21 @@ diff -Naur a/system/core/adb/client/usb_linux.cpp b/system/core/adb/client/usb_l
  #include <sys/time.h>
  #include <sys/types.h>
  #include <unistd.h>
+diff -Naur a/system/core/adb/sysdeps/posix/network.cpp b/system/core/adb/sysdeps/posix/network.cpp
+--- a/system/core/adb/sysdeps/posix/network.cpp  1970-01-01 05:00:00.000000000 +0500
++++ b/system/core/adb/sysdeps/posix/network.cpp  2017-01-04 22:19:02.913121849 +0500
+@@ -21,6 +21,7 @@
+ #include <sys/socket.h>
+ 
+ #include <string>
++#include <string.h>
+ 
+ #include "adb_unique_fd.h"
+ 
 diff -Naur a/system/core/adb/Makefile b/system/core/adb/Makefile
 --- a/system/core/adb/Makefile	1970-01-01 05:00:00.000000000 +0500
 +++ b/system/core/adb/Makefile	2017-01-04 22:19:02.913121849 +0500
-@@ -0,0 +0,103 @@
+@@ -0,0 +0,104 @@
 +adb_version := $(shell git -C . rev-parse --short=12 HEAD 2>/dev/null)-android
 +
 +SRCS+= \
@@ -122,6 +133,7 @@ diff -Naur a/system/core/adb/Makefile b/system/core/adb/Makefile
 +	client/usb_libusb.cpp \
 +	client/usb_linux.cpp \
 +	bugreport.cpp \
++	sysdeps/posix/network.cpp
 +
 +LIBDIAGNOSE_USB_SRCS= \
 +	diagnose_usb.cpp
@@ -140,7 +152,7 @@ diff -Naur a/system/core/adb/Makefile b/system/core/adb/Makefile
 +	-Wno-unused-parameter \
 +	-Wno-missing-field-initializers \
 +	-Wvla \
-+	-DADB_REVISION='"$(adb_version)"' \
++	-DADB_VERSION='"$(adb_version)"' \
 +	-std=gnu++14 \
 +	-DADB_HOST=1 \
 +	-fpermissive \
@@ -228,14 +240,15 @@ diff -Naur a/system/core/base/logging.cpp b/system/core/base/logging.cpp
 diff -Naur a/system/core/base/Makefile b/system/core/base/Makefile
 --- a/system/core/base/Makefile	1970-01-01 05:00:00.000000000 +0500
 +++ b/system/core/base/Makefile	2017-01-04 22:19:02.914121836 +0500
-@@ -0,0 +1,36 @@
+@@ -0,0 +1,37 @@
 +SRCS+= \
 +	file.cpp \
 +	logging.cpp \
 +	parsenetaddress.cpp \
 +	stringprintf.cpp \
 +	strings.cpp \
-+	errors_unix.cpp
++	errors_unix.cpp \
++	test_utils.cpp
 +
 +override CXXFLAGS+= \
 +	-I./include \
@@ -268,7 +281,7 @@ diff -Naur a/system/core/base/Makefile b/system/core/base/Makefile
 diff -Naur a/system/core/fastboot/Makefile b/system/core/fastboot/Makefile
 --- a/system/core/fastboot/Makefile	1970-01-01 05:00:00.000000000 +0500
 +++ b/system/core/fastboot/Makefile	2017-01-04 22:31:15.722960465 +0500
-@@ -0,0 +1,66 @@
+@@ -0,0 +1,67 @@
 +fastboot_version := $(shell git -C . rev-parse --short=12 HEAD 2>/dev/null)-android
 +
 +SRCS+= \
@@ -293,10 +306,11 @@ diff -Naur a/system/core/fastboot/Makefile b/system/core/fastboot/Makefile
 +	-I../../extras/ext4_utils \
 +	-I../../extras/ext4_utils/include \
 +	-I../../extras/f2fs_utils \
++	-I../libziparchive/include \
 +	-Wall \
 +	-Wextra \
 +	-Wunreachable-code \
-+	-DFASTBOOT_REVISION='"$(fastboot_version)"' \
++	-DFASTBOOT_VERSION='"$(fastboot_version)"' \
 +	-std=gnu++14
 +
 +LIBS= \
@@ -425,14 +439,13 @@ diff -Naur a/system/core/libcrypto_utils/Makefile b/system/core/libcrypto_utils/
 diff -Naur a/system/core/libcutils/Makefile b/system/core/libcutils/Makefile
 --- a/system/core/libcutils/Makefile	1970-01-01 05:00:00.000000000 +0500
 +++ b/system/core/libcutils/Makefile	2017-01-04 22:19:02.915121824 +0500
-@@ -0,0 +1,42 @@
+@@ -0,0 +1,41 @@
 +CSRCS+= \
 +	load_file.c \
 +	threads.c \
 +	socket_inaddr_any_server_unix.c \
 +	socket_local_client_unix.c \
 +	socket_local_server_unix.c \
-+	socket_loopback_server_unix.c \
 +	socket_network_client_unix.c
 +
 +CXXSRCS+= \
@@ -530,38 +543,60 @@ diff -Naur a/system/core/liblog/Makefile b/system/core/liblog/Makefile
 +
 +mrproper: clean
 +	rm -rf $(BIN)
+diff -Naur a/system/core/libsparse/sparse_read.cpp b/system/core/libsparse/sparse_read.cpp
+--- a/system/core/libsparse/sparse_read.cpp    1970-01-01 05:00:00.000000000 +0500
++++ b/system/core/libsparse/sparse_read.cpp    2017-01-04 22:19:02.916121811 +0500
+@@ -26,6 +26,7 @@
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <string>
++#include <string.h>
+ #include <unistd.h>
+ 
+ #include <sparse/sparse.h>
 diff -Naur a/system/core/libsparse/Makefile b/system/core/libsparse/Makefile
 --- a/system/core/libsparse/Makefile	1970-01-01 05:00:00.000000000 +0500
 +++ b/system/core/libsparse/Makefile	2017-01-04 22:19:02.916121811 +0500
-@@ -0,0 +1,31 @@
-+SRCS+= \
+@@ -0,0 +1,42 @@
++CSRCS+= \
 +	backed_block.c \
 +	output_file.c \
 +	sparse.c \
 +	sparse_crc32.c \
-+	sparse_err.c \
-+	sparse_read.c
++	sparse_err.c
++
++CXXSRCS+= \
++       sparse_read.cpp
 +
 +override CFLAGS+= \
 +	-I./include \
 +	-Werror
 +
-+OBJS= $(SRCS:.c=.o)
++override CXXFLAGS+= \
++	-I../include \
++	-I./include \
++	-I../base/include \
++	-std=gnu++14
++
++COBJS= $(CSRCS:.c=.o)
++CXXOBJS= $(CXXSRCS:.cpp=.o)
 +
 +BIN= libsparse.a
 +
 +all: $(BIN)
 +
-+$(BIN): $(OBJS)
-+	$(AR) rcs $@ $(OBJS)
++$(BIN): $(COBJS) $(CXXOBJS)
++	$(AR) rcs $@ $(COBJS) $(CXXOBJS)
 +
 +%.o: %.c
 +	$(CC) -c $< $(CFLAGS) -o $@
++%.o: %.cpp
++	$(CXX) -c $< $(CXXFLAGS) -o $@
 +
 +.PHONY: clean mrproper
 +
 +clean:
-+	rm -rf $(OBJS)
++	rm -rf $(COBJS) $(CXXOBJS)
 +
 +mrproper: clean
 +	rm -rf $(BIN)
