@@ -178,7 +178,6 @@ sys-apps/lm_sensors sensord
 sys-apps/smartmontools -minimal
 sys-apps/util-linux static-libs
 sys-auth/polkit-qt qt5
-sys-block/gparted btrfs dmraid f2fs fat kde mdadm ntfs policykit udf
 sys-block/parted device-mapper -debug
 sys-boot/grub efiemu mount truetype -libzfs device-mapper
 sys-cluster/openmpi romio threads
