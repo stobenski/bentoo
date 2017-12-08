@@ -17,7 +17,6 @@ PDEPEND="
 	bentoo/bentoo-acpi
 	bentoo/bentoo-browser
 	bentoo/bentoo-editors
-	bentoo/bentoo-firmware
 	cockpit? ( sys-apps/cockpit sys-apps/tuned )
 	enlightenment? ( bentoo/bentoo-enlightenment )
 	exploit? ( bentoo/bentoo-exploit )
