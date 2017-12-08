@@ -159,7 +159,7 @@ net-libs/libssh server
 net-libs/telepathy-qt qt5
 net-libs/webkit-gtk -opengl jit
 net-misc/connman openvpn
-net-misc/curl curl_ssl_nss -curl_ssl_openssl
+net-misc/curl curl_ssl_openssl
 net-misc/networkmanager dhclient connection-sharing modemmanager
 net-misc/openssh -ldap
 net-misc/trackma gtk
