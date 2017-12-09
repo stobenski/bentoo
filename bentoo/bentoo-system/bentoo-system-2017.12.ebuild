@@ -182,6 +182,11 @@ src_install() {
 	newins "${FILESDIR}"/motd-${PV} motd
 	newins "${FILESDIR}"/issue.bentoo.logo issue.bentoo.logo
 
+	if [ -r "${ROOT}/etc/issue" ]; then
+		rm -f "${ROOT}/etc/issue"
+		ln -s "${ROOT}/etc/issue.bentoo.logo" "${ROOT}/etc/issue"
+	fi
+
 	if [ ! -e "${EROOT}/etc/env.d/02locale" ]
 	then
 		doenvd "${FILESDIR}"/02locale
