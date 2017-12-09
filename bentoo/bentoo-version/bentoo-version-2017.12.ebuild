@@ -16,7 +16,7 @@ KEYWORDS="~amd64 ~arm ~x86"
 IUSE=""
 DEPEND=""
 # Listing default packages for the current release
-RDEPEND="virtual/service-manager"
+RDEPEND=""
 
 src_unpack () {
 	echo "Bentoo Linux ${ARCH} ${PV}" > "${T}/bentoo-release"
