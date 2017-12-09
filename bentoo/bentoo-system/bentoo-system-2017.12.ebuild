@@ -96,7 +96,6 @@ PDEPEND="${PDEPEND}
 	media-gfx/graphviz
 	media-sound/alsa-utils
 	media-video/mpv
-	net-dialup/lrzsz
 	net-dialup/ppp
 	net-firewall/ipset
 	net-firewall/iptables
