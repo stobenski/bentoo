@@ -31,4 +31,8 @@ src_install () {
 	insinto /etc
 	doins "${T}"/bentoo-release
 	doins "${T}"/system-release
+
+	# Bug 3459 - reduce the risk of fork bombs
+	insinto /etc/security/limits.d
+	doins "${FILESDIR}/00-bentoo-anti-fork-bomb.conf"
 }
