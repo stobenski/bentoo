@@ -1,20 +1,20 @@
 # Copyright 1999-2017 The Bentoo Authors. All rights reserved.
 # Distributed under the terms of the GNU General Public License v3 or later
 
-EAPI="6"
+EAPI=6
 
-inherit gnome2-utils cmake-utils
+inherit cmake-utils gnome2-utils
 
-DESCRIPTION="An open source reimplementation of TES III: Morrowind"
-HOMEPAGE="https://openmw.org/"
+DESCRIPTION="Open source reimplementation of TES III: Morrowind"
+HOMEPAGE="https://openmw.org"
 SRC_URI="https://github.com/OpenMW/openmw/archive/${P}.tar.gz"
 
 LICENSE="GPL-3 MIT BitstreamVera ZLIB"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE="doc devtools +qt5"
+RESTRICT="mirror"
 
-# 0.37.0: >=media-video/ffmpeg-0.9 is required for swresample
 RDEPEND="
 	( >=dev-games/openscenegraph-3.3.4[ffmpeg,jpeg,png,sdl,svg,truetype,zlib] >=dev-games/openscenegraph-qt-3.3.4 )
 	dev-games/mygui
@@ -26,15 +26,21 @@ RDEPEND="
 	media-video/ffmpeg:=
 	>=sci-physics/bullet-2.86
 	virtual/opengl
-	qt5? ( app-arch/unshield
+	qt5? (
+		app-arch/unshield
 		dev-qt/qtcore:5
 		dev-qt/qtgui:5
-		dev-qt/qtnetwork:5 )"
+		dev-qt/qtnetwork:5
+	)
+"
 DEPEND="${RDEPEND}
 	virtual/pkgconfig
-	doc? ( app-doc/doxygen
+	doc? (
+		app-doc/doxygen
 		dev-python/sphinx
-		media-gfx/graphviz )"
+		media-gfx/graphviz
+	)
+"
 
 S="${WORKDIR}/${PN}-${P}"
 
