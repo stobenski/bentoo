@@ -1,8 +1,0 @@
-[Desktop Entry]
-Name=Irssi
-Comment=The client of the future
-Exec=urxvt -geometry 90x30 -name 'irssi' -e sh -c "/usr/bin/irssi"
-Icon=irssi
-Terminal=true
-Type=Application
-Categories=Network;InstantMessaging;
