@@ -3,7 +3,7 @@
 # Syslog-ng default configuration file for Gentoo FreeBSD
 #
 
-# https://bugs.gentoo.org/show_bug.cgi?id=426814
+# https://bugs.gentoo.org/426814
 @include "scl.conf"
 
 options {
@@ -14,7 +14,7 @@ options {
 	# to the file every 10 minutes.  That's pretty ugly after a while.
 	# Change it to every 12 hours so you get a nice daily update of
 	# how many messages syslog-ng missed (0).
-	stats_freq(43200); 
+	stats_freq(43200);
 };
 
 source src { system(); internal(); };
