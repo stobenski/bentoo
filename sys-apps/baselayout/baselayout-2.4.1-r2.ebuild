@@ -1,19 +1,21 @@
 # Copyright 1999-2017 The Bentoo Authors. All rights reserved.
 # Distributed under the terms of the GNU General Public License v3 or later
 
-EAPI=5
+EAPI=6
 
-inherit eutils multilib
+inherit eutils multilib versionator prefix
 
 DESCRIPTION="Filesystem baselayout and init scripts"
 HOMEPAGE="https://www.gentoo.org/"
-SRC_URI="mirror://gentoo/${P}.tar.bz2
-	https://dev.gentoo.org/~vapier/dist/${P}.tar.bz2"
+SRC_URI="https://gitweb.gentoo.org/proj/baselayout.git/snapshot/${P}.tar.bz2"
 
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS="alpha amd64 arm arm64 hppa ia64 m68k ~mips ppc ppc64 s390 sh sparc x86 ~amd64-fbsd ~sparc-fbsd ~x86-fbsd"
+KEYWORDS="alpha amd64 arm ~arm64 hppa ia64 ~m68k ~mips ppc ppc64 ~s390 ~sh ~sparc x86 ~amd64-fbsd ~sparc-fbsd ~x86-fbsd"
 IUSE="build kernel_linux"
+
+# We are Bentoo!
+PATCHES=( "${FILESDIR}"/${PN}-bentoo-os-release.patch )
 
 pkg_setup() {
 	multilib_layout
@@ -94,7 +96,7 @@ multilib_layout() {
 				case ${CHOST} in
 				*-gentoo-freebsd*) ;; # We want it the other way on fbsd.
 				i?86*|x86_64*|powerpc*|sparc*|s390*)
-					if [ -d "${prefix}lib32" ] ; then
+					if [[ -d ${prefix}lib32 && ! -h ${prefix}lib32 ]] ; then
 						rm -f "${prefix}lib32"/.keep
 						if ! rmdir "${prefix}lib32" 2>/dev/null ; then
 							ewarn "You need to merge ${prefix}lib32 into ${prefix}lib"
@@ -135,30 +137,13 @@ pkg_preinst() {
 	rm -f "${ED}"/usr/share/${PN}/Makefile
 }
 
-src_unpack() {
-	unpack ${A}
-
-	cd "${S}"
-	# We are Bentoo!
-	epatch "${FILESDIR}/${PN}-bentoo.patch"
-}
-
 src_prepare() {
+	default
 	if use prefix; then
-		sed -i -r\
-			-e "/PATH=/!s:/(etc|usr/bin|bin):\"${EPREFIX}\"/\1:g" \
-			-e "/PATH=/s|([:\"])/|\1${EPREFIX}/|g" \
-			-e "/PATH=.*\/sbin/s|\"$|:/usr/sbin:/sbin\"|" \
-			-e "/PATH=.*\/bin/s|\"$|:/usr/bin:/bin\"|" \
-			etc/profile || die
-		sed -i -r \
-			-e "s:/(etc/env.d|opt|usr):${EPREFIX}/\1:g" \
-			-e "/^PATH=/s|\"$|:${EPREFIX}/usr/sbin:${EPREFIX}/sbin\"|" \
-			etc/env.d/00basic || die
-		sed -i "s:/bin:${EPREFIX}/bin:" etc/shells || die
-		sed -i -r \
-			-e "s,:/(root|bin|sbin|var|),:${EPREFIX}/\1,g" \
-			share.Linux/passwd || die
+		hprefixify -e "/EUID/s,0,${EUID}," -q '"' etc/profile
+		hprefixify etc/{env.d/50baselayout,shells} share.Linux/passwd
+		echo PATH=/usr/bin:/bin >> etc/env.d/99host
+		echo ROOTPATH=/usr/sbin:/sbin:/usr/bin:/bin >> etc/env.d/99host
 	fi
 
 	# handle multilib paths.  do it here because we want this behavior
@@ -172,7 +157,7 @@ src_prepare() {
 		ldpaths+=":${EPREFIX}/${libdir}:${EPREFIX}/usr/${libdir}"
 		ldpaths+=":${EPREFIX}/usr/local/${libdir}"
 	done
-	echo "LDPATH='${ldpaths#:}'" >> etc/env.d/00basic
+	echo "LDPATH='${ldpaths#:}'" >> etc/env.d/50baselayout
 
 	# rc-scripts version for testing of features that *should* be present
 	echo "Bentoo Base System release ${PV}" > "${D}"/etc/bentoo-release
@@ -210,8 +195,8 @@ pkg_postinst() {
 	done
 
 	# Take care of the etc-update for the user
-	if [ -e "${ROOT}"/etc/._cfg0000_bentoo-release ] ; then
-		mv "${ROOT}"/etc/._cfg0000_bentoo-release "${ROOT}"/etc/bentoo-release
+	if [ -e "${EROOT}"etc/._cfg0000_bentoo-release ] ; then
+		mv "${EROOT}"etc/._cfg0000_bentoo-release "${EROOT}"etc/bentoo-release
 	fi
 
 	# whine about users that lack passwords #193541
@@ -242,9 +227,24 @@ pkg_postinst() {
 	if use kernel_linux; then
 		mkdir -p "${EROOT}"run
 
-		if ! grep -qs "^tmpfs.*/run " "${ROOT}"proc/mounts ; then
-			echo
-			ewarn "You should reboot the system now to get /run mounted with tmpfs!"
+		local found fstype mountpoint
+		while read -r _ mountpoint fstype _; do
+		[[ ${mountpoint} = /run ]] && [[ ${fstype} = tmpfs ]] && found=1
+		done < "${ROOT}"proc/mounts
+		[[ -z ${found} ]] &&
+			ewarn "You should reboot now to get /run mounted with tmpfs!"
+	fi
+
+	for x in ${REPLACING_VERSIONS}; do
+		if ! version_is_at_least 2.4 ${v}; then
+			ewarn "After updating ${EROOT}etc/profile, please run"
+			ewarn "env-update and . /etc/profile"
+			break
 		fi
+	done
+
+	if [[ -e "${EROOT}"etc/env.d/00basic ]]; then
+		ewarn "${EROOT}etc/env.d/00basic is now ${EROOT}etc/env.d/50baselayout"
+		ewarn "Please migrate your changes."
 	fi
 }
