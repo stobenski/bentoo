@@ -48,4 +48,3 @@ elif [ "$(cat /proc/sys/kernel/pax/softmode)" = "0" ]; then
 else
 	${dialog} --aspect 15 --msgbox "Failed to detect current PaX softmode state. Either PaX softmode is not allowed, or this isn't a hardened kernel." 0 0
 fi
-
