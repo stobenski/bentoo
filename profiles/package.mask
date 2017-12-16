@@ -1,3 +1,0 @@
-# Don't let people install these accidentally
-=app-portage/ibashrc-9999
-=sys-devel/ipatch-9999
