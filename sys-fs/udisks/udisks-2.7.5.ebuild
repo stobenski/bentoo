@@ -2,7 +2,6 @@
 # Distributed under the terms of the GNU General Public License v3 or later
 
 EAPI=6
-
 inherit autotools bash-completion-r1 eutils linux-info systemd udev xdg-utils
 
 DESCRIPTION="Daemon providing interfaces to work with storage devices"
@@ -36,7 +35,9 @@ COMMON_DEPEND="
 	lvm? ( sys-fs/lvm2 )
 	systemd? ( >=sys-apps/systemd-209 )
 	lsm? ( sys-libs/libstoragemgmt )
-	"
+	dev-libs/volume_key
+	sys-libs/libblockdev
+"
 
 # gptfdisk -> src/udiskslinuxpartition.c -> sgdisk (see also #412801#c1)
 # util-linux -> mount, umount, swapon, swapoff (see also #403073)
@@ -50,7 +51,7 @@ RDEPEND="${COMMON_DEPEND}
 	)
 	gptfdisk? ( >=sys-apps/gptfdisk-0.8 )
 	selinux? ( sec-policy/selinux-devicekit )
-	"
+"
 DEPEND="${COMMON_DEPEND}
 	app-text/docbook-xsl-stylesheets
 	dev-libs/libxslt
@@ -61,7 +62,7 @@ DEPEND="${COMMON_DEPEND}
 	>=sys-kernel/linux-headers-3.1
 	virtual/pkgconfig
 	nls? ( dev-util/intltool )
-	"
+"
 
 S="${WORKDIR}/${PN}-${P}"
 
