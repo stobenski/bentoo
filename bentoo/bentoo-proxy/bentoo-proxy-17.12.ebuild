@@ -3,21 +3,19 @@
 
 EAPI=6
 
-DESCRIPTION="Bentoo meta ebuild to install all apps"
+DESCRIPTION="Bentoo proxy meta ebuild"
 HOMEPAGE="https://bitbucket.org/redeyeteam/bentoo"
 
-LICENSE="metapackage"
+LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS="amd64 arm x86"
 
-IUSE="plasma proxy"
+IUSE=""
 DEPEND=""
 
-RDEPEND=""
-
-PDEPEND="
-	plasma? ( bentoo/bentoo-plasma )
-	proxy? ( bentoo/bentoo-proxy )
-	bentoo/bentoo-system
-	bentoo/bentoo-vim
-"
+RDEPEND="${DEPEND}
+	net-proxy/privoxy
+	net-vpn/tor
+	net-dns/dnscrypt-proxy
+	net-dns/unbound
+	"
