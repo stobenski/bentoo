@@ -1,0 +1,10 @@
+# Don't let people install these accidentally
+app-admin/syslog-ng::gentoo
+dev-libs/libbytesize::gentoo
+dev-libs/volume_key::gentoo
+dev-util/android-tools::gentoo
+games-engines/openmw::gentoo
+sys-apps/baselayout::gentoo
+sys-apps/lsb-release::gentoo
+sys-fs/udisks::gentoo
+virtual/linux-sources::gentoo
