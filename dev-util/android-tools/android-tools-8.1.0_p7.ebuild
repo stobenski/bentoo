@@ -24,6 +24,7 @@ DEPEND="${RDEPEND}
 	dev-libs/libusb
 	dev-libs/libpcre
 	sys-devel/ipatch
+	sys-fs/f2fs-tools
 	sys-libs/libselinux
 	sys-libs/zlib"
 
@@ -33,7 +34,7 @@ src_unpack() {
 	EGIT_CLONE_TYPE="mirror"
 
 	local r
-	for r in system/core system/extras external/f2fs-tools; do
+	for r in system/core system/extras; do
 		EGIT_REPO_URI="https://android.googlesource.com/platform/${r}"
 		EGIT_CHECKOUT_DIR="${WORKDIR}/${r}"
 		EGIT_BRANCH="${MY_B}"
