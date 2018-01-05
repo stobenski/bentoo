@@ -1,5 +1,5 @@
-# Copyright 1999-2017 The Bentoo Authors. All rights reserved.
-# Distributed under the terms of the GNU General Public License v3 or later
+# Copyright 1999-2017 Gentoo Foundation
+# Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 VIRTUALX_REQUIRED="pgo"
@@ -24,12 +24,13 @@ if [[ ${MOZ_ESR} == 1 ]]; then
 fi
 
 # Patch version
-PATCH="${PN}-54.0-patches-03"
+PATCH="${PN}-57.0-patches-01"
 MOZ_HTTP_URI="https://archive.mozilla.org/pub/${PN}/releases"
 
 MOZCONFIG_OPTIONAL_WIFI=1
 
-inherit check-reqs flag-o-matic toolchain-funcs eutils gnome2-utils mozconfig-v6.53 pax-utils fdo-mime autotools virtualx mozlinguas-v2
+inherit check-reqs flag-o-matic toolchain-funcs eutils gnome2-utils mozconfig-v6.57 pax-utils xdg-utils autotools \
+	virtualx mozlinguas-v2
 
 DESCRIPTION="Firefox Web Browser"
 HOMEPAGE="http://www.mozilla.com/firefox"
@@ -38,7 +39,7 @@ KEYWORDS="~amd64 ~x86"
 
 SLOT="0"
 LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
-IUSE="bindist +gmp-autoupdate hardened hwaccel jack nsplugin pgo selinux test"
+IUSE="bindist eme-free +gmp-autoupdate hardened hwaccel jack nsplugin pgo +screenshot selinux test"
 RESTRICT="!bindist? ( bindist )"
 
 PATCH_URIS=( https://dev.gentoo.org/~{anarchy,axs,polynomial-c}/mozilla/patchsets/${PATCH}.tar.xz )
@@ -50,14 +51,15 @@ ASM_DEPEND=">=dev-lang/yasm-1.1"
 
 RDEPEND="
 	jack? ( virtual/jack )
-	>=dev-libs/nss-3.30.2
-	>=dev-libs/nspr-4.14
+	>=dev-libs/nss-3.33
+	>=dev-libs/nspr-4.17
 	selinux? ( sec-policy/selinux-mozilla )"
 
 DEPEND="${RDEPEND}
 	pgo? ( >=sys-devel/gcc-4.5 )
-	>=dev-lang/rust-1.15.1
-	amd64? ( ${ASM_DEPEND} virtual/opengl )
+	amd64? ( ${ASM_DEPEND} virtual/opengl
+			>=sys-devel/llvm-4.0.1
+			>=sys-devel/clang-4.0.1 )
 	x86? ( ${ASM_DEPEND} virtual/opengl )"
 
 S="${WORKDIR}/firefox-${MOZ_PV}"
@@ -74,6 +76,9 @@ fi
 
 pkg_setup() {
 	moz_pkgsetup
+
+	# Build stylo 
+	use amd64 &&  export BINDGEN_CFLAGS=$(pkg-config --cflags nspr pixman-1 | xargs)
 
 	# Avoid PGO profiling problems due to enviroment leakage
 	# These should *always* be cleaned up anyway
@@ -117,7 +122,6 @@ src_unpack() {
 }
 
 src_prepare() {
-	# Apply our patches
 	eapply "${WORKDIR}/firefox"
 
 	# Enable gnomebreakpad
@@ -172,10 +176,6 @@ src_prepare() {
 	# Must run autoconf in js/src
 	cd "${S}"/js/src || die
 	eautoconf old-configure.in
-
-	# Need to update jemalloc's configure
-	cd "${S}"/memory/jemalloc/src || die
-	WANT_AUTOCONF= eautoconf
 }
 
 src_configure() {
@@ -197,11 +197,16 @@ src_configure() {
 	# enable JACK, bug 600002
 	mozconfig_use_enable jack
 
+	use eme-free && mozconfig_annotate '+eme-free' --disable-eme
+
 	# It doesn't compile on alpha without this LDFLAGS
 	use alpha && append-ldflags "-Wl,--no-relax"
 
 	# Add full relro support for hardened
-	use hardened && append-ldflags "-Wl,-z,relro,-z,now"
+	if use hardened; then
+		append-ldflags "-Wl,-z,relro,-z,now"
+		mozconfig_use_enable hardened hardening
+	fi
 
 	# Only available on mozilla-overlay for experimentation -- Removed in Gentoo repo per bug 571180
 	#use egl && mozconfig_annotate 'Enable EGL as GL provider' --with-gl-provider=EGL
@@ -280,6 +285,12 @@ src_install() {
 		|| die
 	fi
 
+	if ! use screenshot; then
+		echo "pref(\"extensions.screenshots.disabled\", true);" >> \
+			"${BUILD_OBJ_DIR}/dist/bin/browser/defaults/preferences/all-gentoo.js" \
+			|| die
+	fi
+
 	echo "pref(\"extensions.autoDisableScopes\", 3);" >> \
 		"${BUILD_OBJ_DIR}/dist/bin/browser/defaults/preferences/all-gentoo.js" \
 		|| die
@@ -291,7 +302,7 @@ src_install() {
 	fi
 
 	local plugin
-	use gmp-autoupdate || for plugin in "${GMP_PLUGIN_LIST[@]}" ; do
+	use gmp-autoupdate || use eme-free || for plugin in "${GMP_PLUGIN_LIST[@]}" ; do
 		echo "pref(\"media.${plugin}.autoupdate\", false);" >> \
 			"${BUILD_OBJ_DIR}/dist/bin/browser/defaults/preferences/all-gentoo.js" \
 			|| die
@@ -376,10 +387,10 @@ pkg_preinst() {
 
 pkg_postinst() {
 	# Update mimedb for the new .desktop file
-	fdo-mime_desktop_database_update
+	xdg_desktop_database_update
 	gnome2_icon_cache_update
 
-	if ! use gmp-autoupdate ; then
+	if ! use gmp-autoupdate && ! use eme-free ; then
 		elog "USE='-gmp-autoupdate' has disabled the following plugins from updating or"
 		elog "installing into new profiles:"
 		local plugin
