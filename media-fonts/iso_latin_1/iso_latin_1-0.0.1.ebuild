@@ -47,7 +47,8 @@ src_install() {
 
 pkg_postinst() {
 	echo
-	elog "To use iso-latin-1 instead of the default console font:"
-	elog "   set FONT=iso-latin-1-8x16 in /etc/vconsole.conf"
+	elog "To use iso-latin-1 instead of the default console font with:"
+	elog "OpenRC: set consolefont=\"iso-latin-1-8x16\" in /etc/conf.d/consolefont"
+	elog "Systemd: set FONT=\"iso-latin-1-8x16\" in /etc/vconsole.conf"
 	echo
 }
