@@ -12,7 +12,7 @@ KEYWORDS="amd64 arm x86"
 
 IUSE="addons bluetooth drkonqi filelight kamera kgpg kdialog kdeconnect kdepim\
  kmix kpat krusader ksystemlog kwalletmanager kwalletpam networkmanager okular\
- telepathy touchpad wallpapers khelpcenter vault pulseaudio"
+ redshift telepathy touchpad wallpapers khelpcenter vault pulseaudio"
 
 KLV="17.12.50"
 
@@ -74,6 +74,7 @@ RDEPEND="${DEPEND}
 	networkmanager? ( <kde-plasma/plasma-nm-${KLV} )
 	okular? ( <kde-apps/okular-${KLV} )
 	pulseaudio? ( <kde-plasma/plasma-pa-${KLV} )
+	redshift? ( kde-misc/plasma-applet-redshift-control )
 	telepathy? ( <kde-apps/plasma-telepathy-meta-${KLV} )
 	touchpad? ( kde-plasma/plasma-desktop[touchpad] )
 	khelpcenter? ( <kde-apps/khelpcenter-${KLV} )
