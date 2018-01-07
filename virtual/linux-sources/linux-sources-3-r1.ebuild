@@ -18,10 +18,8 @@ RDEPEND="
 		sys-kernel/git-sources
 		sys-kernel/hardened-sources
 		sys-kernel/mips-sources
-		sys-kernel/openvz-sources
 		sys-kernel/pf-sources
 		sys-kernel/rt-sources
-		sys-kernel/tuxonice-sources
 		sys-kernel/xbox-sources
 		sys-kernel/zen-sources
 		sys-kernel/aufs-sources
