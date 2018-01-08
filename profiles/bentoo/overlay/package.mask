@@ -1,5 +1,6 @@
 # Don't let people install these accidentally
 app-admin/syslog-ng::gentoo
+dev-games/openscenegraph-qt::gentoo
 dev-libs/libbytesize::gentoo
 dev-libs/volume_key::gentoo
 dev-util/android-tools::gentoo
