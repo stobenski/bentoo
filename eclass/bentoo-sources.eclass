@@ -298,9 +298,13 @@ bentoo-sources_src_prepare() {
 
 	eapply_user
 
-    ebegin "Cleanup backups after patching"
+	ebegin "Cleanup backups after patching"
 		rm_crap
 	eend
+
+	if [ "${VERSION}" = "4" ] || [ "${PATCHLEVEL}" = "14" ] ; then
+		chmod +x tools/objtool/sync-check.sh
+	fi
 }
 
 # @FUNCTION: src_compile
