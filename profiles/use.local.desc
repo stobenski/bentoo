@@ -1,0 +1,100 @@
+# This file is deprecated as per GLEP 56 in favor of metadata.xml. Please add
+# your descriptions to your package's metadata.xml ONLY.
+# * generated automatically using egencache *
+
+app-admin/syslog-ng:amqp - Enable support for AMQP destinations
+app-admin/syslog-ng:json - Enable support for JSON template formatting via dev-libs/json-c
+app-admin/syslog-ng:mongodb - Enable support for mongodb destinations
+app-admin/syslog-ng:pacct - Enable support for reading Process Accounting files (EXPERIMENTAL, Linux only)
+app-admin/syslog-ng:redis - Enable support for Redis destinations
+app-admin/syslog-ng:smtp - Enable support for SMTP destinations
+app-admin/syslog-ng:spoof-source - Enable support for spoofed source addresses
+app-mobilephone/spflashtool:system-qt - Use system version of Qt libs instead of packaged
+app-mobilephone/spflashtool:udev-rules - Install udev rules for Android devices
+bentoo/bentoo:cockpit - Install sys-apps/cockpit
+bentoo/bentoo:enlightenment - Install bentoo/bentoo-enlightenment
+bentoo/bentoo:exploit - Install bentoo/bentoo-exploit
+bentoo/bentoo:gnome - Install bentoo/bentoo-gnome
+bentoo/bentoo:kde - Install bentoo/bentoo-kde
+bentoo/bentoo:mate - Install bentoo/bentoo-mate
+bentoo/bentoo:mobile - Install bentoo/bentoo-mobile
+bentoo/bentoo:pelican - Install bentoo/bentoo-pelican
+bentoo/bentoo:proxie - Install bentoo/bentoo-proxies
+bentoo/bentoo:steam - Install games-util/steam-launcher
+bentoo/bentoo:wine - Install bentoo/bentoo-xfce
+bentoo/bentoo:xfce - Install bentoo/bentoo-wine
+bentoo/bentoo-plasma:addons - Install kde-plasma/kdeplasma-addons
+bentoo/bentoo-plasma:filelight - Install kde-apps/filelight
+bentoo/bentoo-plasma:kamera - Install kde-apps/kamera
+bentoo/bentoo-plasma:kdepim - Install kde-apps/kdepim-meta
+bentoo/bentoo-plasma:kdialog - Install kde-apps/kdialog
+bentoo/bentoo-plasma:kgpg - Install kde-apps/kgpg
+bentoo/bentoo-plasma:kmix - Install kde-apps/kmix
+bentoo/bentoo-plasma:kpat - Install kde-apps/kpat
+bentoo/bentoo-plasma:krusader - Install kde-misc/krusader
+bentoo/bentoo-plasma:ksystemlog - Install kde-apps/ksystemlog
+bentoo/bentoo-plasma:kwalletmanager - Install kde-apps/kwalletmanager
+bentoo/bentoo-plasma:kwalletpam - Install kde-plasma/kwallet-pam
+bentoo/bentoo-plasma:okular - Install kde-apps/okular
+bentoo/bentoo-plasma:telepathy - Install kde-apps/plasma-telepathy-meta
+bentoo/bentoo-plasma:touchpad - Install touchpad cfg for plasma-desktop
+bentoo/bentoo-system:livecd-stage1 - Install sys-kernel/linux-firmware
+bentoo/bentoo-system:lvm - Install sys-fs/lvm2
+bentoo/bentoo-system:optimus - Install x11-misc/bumblebee
+bentoo/bentoo-system:pax_kernel - Enable building under a PaX enabled kernel
+bentoo/bentoo-system:qemu - Install app-emulation/virt-manager
+bentoo/bentoo-system:rxvt - Install bentoo/bentoo-rxvt
+bentoo/bentoo-system:udf - Install sys-fs/udftools
+bentoo/bentoo-system:zfs - Install sys-fs/zfs
+bentoo/bentoo-x11:keyboard - Install cfg file for keyboard support
+bentoo/bentoo-x11:mouse - Install cfg file for mouse support
+bentoo/bentoo-x11:nouveau - Install cfg file for nouveau support
+bentoo/bentoo-x11:nvidia - Install cfg file for nvidia support
+bentoo/bentoo-x11:synaptics - Install cfg file for synaptics support
+dev-libs/cyrus-sasl:authdaemond - Add Courier-IMAP authdaemond unix socket support (net-mail/courier-imap, mail-mta/courier)
+dev-libs/cyrus-sasl:ldapdb - Enable ldapdb plugin
+dev-libs/cyrus-sasl:openldap - Add ldap support for saslauthd
+dev-libs/cyrus-sasl:sample - Enable sample client and server
+dev-libs/cyrus-sasl:srp - Enable SRP authentication
+dev-libs/cyrus-sasl:urandom - Use /dev/urandom instead of /dev/random
+games-engines/openmw:devtools - Install development tools like bsatool, esmtool and opencs.
+net-misc/trackma:urwid - Install dev-python/urwid
+sys-apps/cockpit:pcp - Install sys-apps/pcp
+sys-apps/pcp:discovery - Support for service discovery
+sys-apps/pcp:doc - Enable building of the PCP books
+sys-apps/pcp:infiniband - Support for inifiniband metrics
+sys-apps/pcp:manager - Support for daemon manager
+sys-apps/pcp:papi - Support for PAPI
+sys-apps/pcp:perfevent - Perfevent pmda
+sys-apps/pcp:pie - Build position-independent-executable
+sys-apps/pcp:python - Support for tools requiring Python
+sys-apps/pcp:ssp - Enable gcc stack-protector
+sys-apps/pcp:systemd - Support for systemd services
+sys-apps/pcp:webapi - Enable REST API daemon
+sys-fs/udisks:bcache - bcache support
+sys-fs/udisks:btrfs - btrfs support
+sys-fs/udisks:iscsi - Install net-libs/libiscsi
+sys-fs/udisks:lsm - Install sys-libs/libstoragemgmt
+sys-fs/udisks:lvm - Install sys-fs/lvm2
+sys-fs/udisks:lvmcache - lvmcache support
+sys-fs/udisks:zram - zram support
+sys-kernel/bentoo-sources:brand - Enable Bentoo specific branding.
+sys-kernel/bentoo-sources:deblob - Remove binary blobs from kernel sources to provide libre license compliance.
+virtual/linux-sources:firmware - Install linux kernel firmware
+www-client/firefox:bindist - Disable official Firefox branding (icons, name) which are not binary-redistributable according to upstream.
+www-client/firefox:custom-optimization - Build with user-specified compiler optimizations (-Os, -O0, -O1, -O2, -O3) from CFLAGS (unsupported)
+www-client/firefox:eme-free - Disable EME (DRM plugin) cabability at build time
+www-client/firefox:gmp-autoupdate - Allow Gecko Media Plugins (binary blobs) to be automatically downloaded and kept up-to-date in user profiles
+www-client/firefox:gtk2 - Use the cairo-gtk2 rendering engine
+www-client/firefox:hwaccel - Force-enable hardware-accelerated rendering (Mozilla bug 594876)
+www-client/firefox:jemalloc - Enable or disable jemalloc
+www-client/firefox:pgo - Add support for profile-guided optimization using gcc-4.5, for faster binaries. This option will double the compile time.
+www-client/firefox:rust - Enable support for using rust compiler (experimental)
+www-client/firefox:screenshot - Allow to disable screenshot extension in global profile
+www-client/firefox:system-cairo - Use the system-wide x11-libs/cairo instead of bundled.
+www-client/firefox:system-harfbuzz - Use the system-wide media-libs/harfbuzz and media-gfx/graphite2 instead of bundled.
+www-client/firefox:system-icu - Use the system-wide dev-libs/icu instead of bundled.
+www-client/firefox:system-jpeg - Use the system-wide media-libs/libjpeg-turbo instead of bundled.
+www-client/firefox:system-libevent - Use the system-wide dev-libs/libevent instead of bundled.
+www-client/firefox:system-libvpx - Use the system-wide media-libs/libvpx instead of bundled.
+www-client/firefox:system-sqlite - Use the system-wide dev-db/sqlite installation with secure-delete enabled

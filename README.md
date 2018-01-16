@@ -28,11 +28,13 @@ To achieve this goal I'm using several safety guards:
 - all points of _GitHub_'s feature called _[protected branches]_, which means that all merges to _master_ must pass CI tests
 
 This all, of course, doesn't prevent build failures, missing dependencies, etc. So, should you find
-some issues, please send me a PR (if you know how to fix it), or at least [file an issue][New issue].
+some issues, please send me a PR (if you know how to fix it), or at least [file an issue][New bitbucket issue] or [on github][New github issue].
 
 ---
 
 [protected branches]: https://help.github.com/articles/about-protected-branches/
+[New bitbucket issue]: https://bitbucket.org/redeyeteam/bentoo/issues/new
+[New github issue]: https://github.com/redeyeteam/bentoo/issues/new
 [ci-master-badge]: https://travis-ci.org/redeyeteam/bentoo.svg?branch=master
 [ci-master]: https://travis-ci.org/redeyeteam/bentoo
 [gitter-badge]: https://badges.gitter.im/redeyeteam/bentoo.png
