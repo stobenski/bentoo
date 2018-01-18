@@ -3,7 +3,7 @@
 
 EAPI=6
 
-DESCRIPTION="Tools for building C and C++ programs."
+DESCRIPTION="Tools for building C and C++ programs"
 HOMEPAGE="https://bitbucket.org/redeyeteam/bentoo"
 
 LICENSE="metapackage"
