@@ -19,8 +19,7 @@ KLV="17.12.50"
 DEPEND=""
 RDEPEND="${DEPEND}
 	bentoo/bentoo-x11
-	x11-misc/sddm
-	kde-plasma/sddm-kcm
+	( x11-misc/sddm kde-plasma/sddm-kcm )
 
 	<kde-apps/ark-${KLV}
 	<kde-apps/dolphin-${KLV}
