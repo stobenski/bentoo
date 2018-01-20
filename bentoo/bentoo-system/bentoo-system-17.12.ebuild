@@ -85,6 +85,7 @@ PDEPEND="${PDEPEND}
 	livecd? ( sys-kernel/linux-firmware )
 	livecd? ( || ( sys-kernel/genkernel sys-kernel/genkernel-next ) )
 	luks? ( sys-fs/cryptsetup )
+	luks? ( sys-fs/multipath-tools )
 	lvm? ( sys-fs/lvm2 )
 	mail-client/mutt
 	mail-filter/procmail
