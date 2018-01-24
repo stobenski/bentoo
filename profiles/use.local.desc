@@ -9,6 +9,11 @@ app-admin/syslog-ng:pacct - Enable support for reading Process Accounting files 
 app-admin/syslog-ng:redis - Enable support for Redis destinations
 app-admin/syslog-ng:smtp - Enable support for SMTP destinations
 app-admin/syslog-ng:spoof-source - Enable support for spoofed source addresses
+app-misc/mc:edit - Compile and install the mcedit application
+app-misc/mc:mclib - Compile and install the libmc.so shared library
+app-misc/mc:sftp - Add support for sftp (uses net-libs/libssh2 for it).
+app-misc/mc:slang - Use sys-libs/slang instead of sys-libs/ncurses.
+app-misc/mc:xdg - Toggles mc's config dir location. Enable for $XDG_CONFIG_HOME/mc, disable for $HOME/.mc
 app-mobilephone/spflashtool:system-qt - Use system version of Qt libs instead of packaged
 app-mobilephone/spflashtool:udev-rules - Install udev rules for Android devices
 bentoo/bentoo:cockpit - Install sys-apps/cockpit
@@ -81,6 +86,8 @@ sys-fs/udisks:zram - zram support
 sys-kernel/bentoo-sources:brand - Enable Bentoo specific branding.
 sys-kernel/bentoo-sources:deblob - Remove binary blobs from kernel sources to provide libre license compliance.
 virtual/linux-sources:firmware - Install linux kernel firmware
+www-client/falkon:kwallet - Enable encrypted storage of passwords with kde-frameworks/kwallet
+www-client/falkon:nonblockdialogs - Enable fancy non-blocking JavaScript dialogs shown inside the page, not blocking the application window. When closing browser windows with open dialogs, this can crash the application.
 www-client/firefox:bindist - Disable official Firefox branding (icons, name) which are not binary-redistributable according to upstream.
 www-client/firefox:custom-optimization - Build with user-specified compiler optimizations (-Os, -O0, -O1, -O2, -O3) from CFLAGS (unsupported)
 www-client/firefox:eme-free - Disable EME (DRM plugin) cabability at build time
