@@ -34,13 +34,13 @@ PDEPEND="${PDEPEND}
 #    bentoo/bentoo-mpv
 PDEPEND="${PDEPEND}
 	!arm? ( !livecd-stage1? (
-		|| ( sys-boot/grub:0 sys-boot/grub-static sys-boot/grub:2 sys-boot/systemd-boot )
+		|| ( sys-boot/grub:0 sys-boot/grub-static sys-boot/grub:2 \
+		sys-boot/lilo sys-boot/systemd-boot sys-boot/efibootmgr sys-boot/refind )
 		)
 		sys-boot/syslinux
 		sys-boot/efibootmgr )
 	!arm? ( app-portage/cpuid2cpuflags )
 	!arm? ( sys-firmware/intel-microcode )
-
 	!arm? ( sys-power/acpid )
 	!arm? ( sys-power/thermald )
 	!livecd-stage1? (
@@ -85,7 +85,6 @@ PDEPEND="${PDEPEND}
 	livecd? ( sys-kernel/linux-firmware )
 	livecd? ( || ( sys-kernel/genkernel sys-kernel/genkernel-next ) )
 	luks? ( sys-fs/cryptsetup )
-	luks? ( sys-fs/multipath-tools )
 	lvm? ( sys-fs/lvm2 )
 	mail-client/mutt
 	mail-filter/procmail
