@@ -1,6 +1,5 @@
-# Copyright 1999-2015 The Bentoo Authors. All rights reserved.
+# Copyright 1999-2018 The Bentoo Authors. All rights reserved.
 # Distributed under the terms of the GNU General Public License v3 or later
-# $Header: $
 
 # @ECLASS: bentoo-sources.eclass
 # This file is part of Bentoo project.
@@ -19,20 +18,76 @@
 # Bugs: https://bitbucket.org/redeyeteam/bentoo/issues
 # Wiki: https://bitbucket.org/redeyeteam/bentoo/wiki
 
-case ${EAPI:-0} in
-	[012345])
-		die "EAPI ${EAPI:-0} is not supported"
-esac
-
 if [[ ${___ECLASS_ONCE_SRC_BENTOO} != "recur -_+^+_- spank" ]]; then
 ___ECLASS_ONCE_SRC_BENTOO="recur -_+^+_- spank"
 
-EXPORT_FUNCTIONS src_unpack src_prepare src_compile src_install pkg_postinst
+case ${EAPI:-0} in
+	[012345]) die "EAPI=\"${EAPI}\" is not supported" ;;
+	[6]) EXPORT_FUNCTIONS src_unpack src_prepare src_compile src_install pkg_postinst
+esac
 
 # No need to run scanelf/strip on kernel sources/headers (bug #134453).
 RESTRICT="mirror binchecks strip"
 
-: ${LICENSE:="GPL-2"}
+# @FUNCTION: detect_version
+# @USAGE:
+# @DESCRIPTION:
+# this function will detect and set
+# - VERSION: the kernel version (e.g 3 for 3.4.2)
+# - PATCHLEVEL: the kernel patchlevel (e.g 4 for 3.4.2)
+# - SUBLEVEL: the kernel sublevel (e.g 2 for 3.4.2)
+# - KMV: the kernel major version (e.g 3.4 for 3.4.2)
+# - KSV: the original kernel version (eg 2.6.0 for 2.6.0-test11)
+# - KERNEL_URI
+# - SKIP_UPDATE
+# - EXTRAVERSION
+detect_version() {
+	OLDIFS="$IFS"
+	VER="${PV}"
+	IFS='.'
+	set -- ${VER}
+	IFS="${OLDIFS}"
+
+	VERSION="${1}" # the kernel version (e.g 3 for 3.4.2)
+	PATCHLEVEL="${2}" # the kernel patchlevel (e.g 4 for 3.4.2)
+	SUBLEVEL="${3}" # the kernel sublevel (e.g 2 for 3.4.2)
+	KMV="${1}.${2}" # the kernel major version (e.g 3.4 for 3.4.2)
+	KSV="${1}.${2}.${3}" # the original kernel version (eg 2.6.0 for 2.6.0-test11)
+
+	extension="xz"
+	kversion="${KMV}"
+	kname="linux-${kversion}.tar.${extension}"
+	kurl="mirror://kernel/linux/kernel/v${VERSION}.x"
+	KERNEL_URI="${KERNEL_URI} ${kurl}/${kname}"
+	if [ "${SUBLEVEL}" != "0" ] || [ "${PV}" != "${KMV}" ]; then
+		pversion="${PV}"
+		pname="patch-${pversion}.${extension}"
+		KERNEL_URI="${KERNEL_URI} ${kurl}/${pname}"
+	fi
+
+	# 0 for 3.4.0
+	if [ "${SUBLEVEL}" = "0" ] || [ "${PV}" = "${KMV}" ] ; then
+		PV="${KMV}" # default PV=3.4.0 new PV=3.4
+		if [[ "${PR}" == "r0" ]] ; then
+			SKIP_UPDATE=1 # Skip update to latest upstream
+		fi
+	fi
+
+	# ebuild default values setup settings
+	EXTRAVERSION=${EXTRAVERSION:-"-bentoo"}
+	KV_FULL="${PVR}${EXTRAVERSION}"
+	S="${WORKDIR}"/linux-"${KV_FULL}"
+}
+
+detect_version
+
+DESCRIPTION="Full sources for the Linux kernel"
+HOMEPAGE="http://www.kernel.org"
+LICENSE="GPL-2"
+SRC_URI="${KERNEL_URI}"
+SLOT=${SLOT:-${KMV}}
+IUSE="brand deblob symlink"
+KEYWORDS="alpha amd64 arm hppa ia64 mips ppc ppc64 s390 sh sparc x86"
 
 : ${BR:=${BR:-"\x1b[0;01m"}}
 : ${BLUE:=${BLUE:-"\x1b[34;01m"}}
@@ -41,40 +96,6 @@ RESTRICT="mirror binchecks strip"
 : ${NORMAL:=${NORMAL:-"\x1b[0;0m"}}
 : ${RED:=${RED:-"\x1b[31;01m"}}
 : ${YELLOW:=${YELLOW:-"\x1b[33;01m"}}
-
-OLDIFS="$IFS"
-VER="${PV}"
-IFS='.'
-set -- ${VER}
-IFS="${OLDIFS}"
-
-VERSION="${1}" # the kernel version (e.g 3 for 3.4.2)
-PATCHLEVEL="${2}" # the kernel patchlevel (e.g 4 for 3.4.2)
-SUBLEVEL="${3}" # the kernel sublevel (e.g 2 for 3.4.2)
-KMV="${1}.${2}" # the kernel major version (e.g 3.4 for 3.4.2)
-KSV="${1}.${2}.${3}" # the original kernel version (eg 2.6.0 for 2.6.0-test11)
-
-debug-print "${FUNCNAME}: VERSION=${VERSION}"
-debug-print "${FUNCNAME}: PATCHLEVEL=${PATCHLEVEL}"
-debug-print "${FUNCNAME}: SUBLEVEL=${SUBLEVEL}"
-debug-print "${FUNCNAME}: KMV=${KMV}"
-debug-print "${FUNCNAME}: KSV=${KSV}"
-
-# 0 for 3.4.0
-if [ "${SUBLEVEL}" = "0" ] || [ "${PV}" = "${KMV}" ] ; then
-	PV="${KMV}" # default PV=3.4.0 new PV=3.4
-	if [[ "${PR}" == "r0" ]] ; then
-		SKIP_UPDATE=1 # Skip update to latest upstream
-	fi
-fi
-
-# ebuild default values setup settings
-EXTRAVERSION=${EXTRAVERSION:-"-bentoo"}
-KV_FULL="${PVR}${EXTRAVERSION}"
-S="${WORKDIR}"/linux-"${KV_FULL}"
-
-SLOT=${SLOT:-${KMV}}
-IUSE="brand"
 
 DEPEND="app-arch/xz-utils
 	sys-apps/sed
@@ -85,24 +106,26 @@ DEPEND="app-arch/xz-utils
 	brand? ( media-fonts/iso_latin_1 )"
 RDEPEND=""
 
-extension="xz"
-kurl="mirror://kernel/linux/kernel/v${VERSION}.x"
-kversion="${KMV}"
-if [ "${SUBLEVEL}" != "0" ] || [ "${PV}" != "${KMV}" ]; then
-	pversion="${PV}"
-	pname="patch-${pversion}.${extension}"
-	KERNEL_URI="${KERNEL_URI} ${kurl}/${pname}"
-fi
+# @FUNCTION: init_variables
+# @INTERNAL
+# @DESCRIPTION:
+# Internal function initializing all variables.
+# We define it in function scope so user can define
+# all the variables before and after inherit.
+init_variables() {
+	: ${rm_unneeded_arch:=${rm_unneeded_arch_cfg:-no}} # rm_unneeded-arch=yes/no
 
-kname="linux-${kversion}.tar.${extension}"
-KERNEL_URI="${KERNEL_URI} ${kurl}/${kname}"
+	debug-print "${FUNCNAME}: rm_unneeded_arch=${rm_unneeded_arch}"
+}
+
+init_variables
 
 if [[ ${DEBLOB_AVAILABLE} == "1" ]]; then
 	IUSE="${IUSE} deblob"
 
 	# Reflect that kernels contain firmware blobs unless otherwise
 	# stripped
-	LICENSE="${LICENSE} !deblob? ( freedist )"
+	LICENSE="${LICENSE} !deblob? ( linux-firmware )"
 
 	if [[ -n PATCHLEVEL ]]; then
 		DEBLOB_PV="${VERSION}.${PATCHLEVEL}.${SUBLEVEL}"
@@ -133,14 +156,11 @@ if [[ ${DEBLOB_AVAILABLE} == "1" ]]; then
 			${DEBLOB_URI}
 			${DEBLOB_CHECK_URI}
 		)"
-
-
 else
 	# We have no way to deblob older kernels, so just mark them as
 	# tainted with non-libre materials.
-	LICENSE="${LICENSE} freedist"
+	LICENSE="${LICENSE} linux-firmware"
 fi
-
 
 # iternal function
 #
@@ -148,8 +168,6 @@ fi
 # @USAGE:
 # @DESCRIPTION: Remove *.orig or *.rej files
 rm_crap() {
-	debug-print-function ${FUNCNAME} "$@"
-
 	find "${S}" \( -name \*~ -o -name \*.orig -o -name \.*.orig -o -name \*.rej -o -name \*.old -o -name \.*.old \) -delete
 }
 
@@ -177,8 +195,6 @@ rand_element () {
 # @USAGE:
 # @DESCRIPTION:
 get_config() {
-	debug-print-function ${FUNCNAME} "$@"
-
 	ebegin "Searching for best availiable kernel config"
 		if [ -r "/proc/config.gz" ]; then test -d .config >/dev/null 2>&1 || zcat /proc/config.gz > .config
 			einfo " ${BLUE}Found config from running kernel, updating to match target kernel${NORMAL}"
@@ -200,8 +216,6 @@ get_config() {
 # @USAGE:
 # @DESCRIPTION:
 copy() {
-	debug-print-function ${FUNCNAME} "$@"
-
 	[[ ${#} -ne 2 ]] && die "Invalid number of args to ${FUNCNAME}()";
 
 	local src=${1}
@@ -216,8 +230,6 @@ copy() {
 # @USAGE:
 # @DESCRIPTION:
 move() {
-	debug-print-function ${FUNCNAME} "$@"
-
 	[[ ${#} -ne 2 ]] && die "Invalid number of args to ${FUNCNAME}()";
 
 	local src=${1}
@@ -233,25 +245,27 @@ move() {
 # @USAGE:
 # @DESCRIPTION: Extract source packages and do any necessary patching or fixes.
 bentoo-sources_src_unpack() {
-	debug-print-function ${FUNCNAME} "$@"
-
 	if [ "${A}" != "" ]; then
-		ebegin "Extract the sources"
+		ebegin "Extract ${kname}"
 			tar xvJf "${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}/${kname}" &>/dev/null
 		eend $?
 		cd "${WORKDIR}" || die "${RED}cd ${WORKDIR} failed${NORMAL}"
 		mv "linux-${kversion}" "${S}" || die "${RED}mv linux-${kversion} ${S} failed${NORMAL}"
 	fi
 	cd "${S}" || die "${RED}cd ${S} failed${NORMAL}"
-	if [ "${SKIP_UPDATE}" = "1" ] ; then
-		ewarn "${RED}Skipping update to latest upstream ...${NORMAL}"
+	if [ "${SKIP_UPDATE}" != "1"  ] ; then
+		einfo "Update to latest upstream..."
+		ipatch push . "${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}/${pname}"
 	else
-		ipatch push . "${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}/${pname}" "${YELLOW}Update to latest upstream ...${NORMAL}"
+		ewarn "${RED}Skipping update to latest upstream ...${NORMAL}"
 	fi
 
-	use brand && ipatch push . "${FILESDIR}/${KMV}/brand"
+	if use brand; then
+		einfo "Apply bentoo branding patchset..."
+		ipatch push . "${FILESDIR}/${KMV}/brand"
+	fi
 
-	if [[ $DEBLOB_AVAILABLE == 1 ]] && use deblob; then
+	if [[ $DEBLOB_AVAILABLE == 1 ]] && use deblob ; then
 		cp "${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}/${DEBLOB_A}" "${T}" || die "${RED}cp ${DEBLOB_A} failed${NORMAL}"
 		cp "${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}/${DEBLOB_CHECK_A}" "${T}/deblob-check" || die "${RED}cp ${DEBLOB_CHECK_A} failed${NORMAL}"
 		chmod +x "${T}/${DEBLOB_A}" "${T}/deblob-check" || die "${RED}chmod deblob scripts failed${NORMAL}"
@@ -262,33 +276,40 @@ bentoo-sources_src_unpack() {
 # @USAGE:
 # @DESCRIPTION: Prepare source packages and do any necessary patching or fixes.
 bentoo-sources_src_prepare() {
-	debug-print-function ${FUNCNAME} "$@"
-
 	ebegin "Set extraversion in Makefile" # manually set extraversion
 		sed -i -e "s:^\(EXTRAVERSION =\).*:\1 ${EXTRAVERSION}:" Makefile
 	eend
 
-	if [ ! "${EXTRAVERSION}" = "-bentoo" ]; then
-		sed -i -e 's/CONFIG_FLAGS=""/CONFIG_FLAGS="BENTOO"/;s/CONFIG_FLAGS="SMP"/CONFIG_FLAGS="$CONFIG_FLAGS SMP"/' scripts/mkcompile_h
-	fi
+	get_config
 
-	if [ "${oldconfig}" = "yes" ]; then
-		get_config
-	fi
+	case "${rm_unneeded_arch}" in
+	yes)	ebegin "Remove unneeded architectures"
+			if use x86 || use amd64; then
+				rm -rf "${WORKDIR}"/linux-"${KV_FULL}"/arch/{alpha,arc,arm,arm26,arm64,avr32,blackfin,c6x,cris,frv,h8300,hexagon,ia64,m32r,m68k,m68knommu,metag,mips,microblaze,mn10300,nios2,openrisc,parisc,powerpc,ppc,s390,score,sh,sh64,sparc,sparc64,tile,unicore32,um,v850,xtensa}
+				sed -i 's/include/#include/g' "${WORKDIR}"/linux-"${KV_FULL}"/fs/hostfs/Makefile
+			else
+				rm -rf "${WORKDIR}"/linux-"${KV_FULL}"/arch/{avr32,blackfin,c6x,cris,frv,h8300,hexagon,m32r,m68k,m68knommu,microblaze,mn10300,nios2,openrisc,score,tile,unicore32,um,v850,xtensa}
+			fi
+		eend $? ;;
+	no)	ewarn "Skipping remove unneeded architectures ..." ;;
+	esac
+
+	ebegin "Compile ${RED}gen_init_cpio${NORMAL}"
+		make -C "${WORKDIR}"/linux-"${KV_FULL}"/usr/ gen_init_cpio > /dev/null 2>&1
+		chmod +x "${WORKDIR}"/linux-"${KV_FULL}"/usr/gen_init_cpio "${WORKDIR}"/linux-"${KV_FULL}"/scripts/gen_initramfs_list.sh > /dev/null 2>&1
+	eend $?
 
 	cd "${WORKDIR}"/linux-"${KV_FULL}" || die "${RED}cd ${WORKDIR}/linux-${KV_FULL} failed${NORMAL}"
 	local GENTOOARCH="${ARCH}"
 	unset ARCH
 
-	case "$oldconfig" in
-	yes)	ebegin "Running ${RED}make oldconfig${NORMAL}"
-			make oldconfig </dev/null &>/dev/null
-		eend $? "Failed oldconfig"
-		ebegin "Running ${RED}modules_prepare${NORMAL}"
-			make modules_prepare &>/dev/null
-		eend $? "Failed ${RED}modules prepare${NORMAL}" ;;
-	no)	ewarn "Skipping ${RED}make oldconfig${NORMAL} ..." ;;
-	esac
+	ebegin "Running ${RED}make oldconfig${NORMAL}"
+		make oldconfig </dev/null &>/dev/null
+	eend $? "Failed oldconfig"
+
+	ebegin "Running ${RED}modules_prepare${NORMAL}"
+		make modules_prepare &>/dev/null
+	eend $? "Failed ${RED}modules prepare${NORMAL}"
 
 	ARCH="${GENTOOARCH}"
 
@@ -296,24 +317,22 @@ bentoo-sources_src_prepare() {
 	einfo "${RED}$(rand_element "Bentoo is about choice" "Bentoo is about power" "Bentoo Rocks" "Thank you for using Bentoo. :)" "Are you actually trying to read this?" "How many times have you stared at this?" "We are generating the cache right now" "You are paying too much attention." "A theory is better than its explanation." "Phasers locked on target, Captain." "Thrashing is just virtual crashing." "To be is to program." "Real Users hate Real Programmers." "When all else fails, read the instructions." "Functionality breeds Contempt." "The future lies ahead." "3.1415926535897932384626433832795028841971694" "Sometimes insanity is the only alternative." "Inaccuracy saves a world of explanation." "Live long and prosper." "Initiating Self Destruct." "If you only know the power of the Dark Side!" "If you eliminate the impossible, whatever remains, however improbable, must be the truth!" "Enter ye in by the narrow gate: for wide is the gate, and broad is the way, that leadeth to destruction, and many are they that enter in thereby." "知る者は言わず言う者は知らず")${NORMAL}"
 	echo
 
+	if [ -f tools/objtool/sync-check.sh ] ; then
+		chmod +x tools/objtool/sync-check.sh
+	fi
+
 	eapply_user
 
 	ebegin "Cleanup backups after patching"
 		rm_crap
-	eend
-
-	if [ "${VERSION}" = "4" ] || [ "${PATCHLEVEL}" = "14" ] ; then
-		chmod +x tools/objtool/sync-check.sh
-	fi
+	eend $?
 }
 
 # @FUNCTION: src_compile
 # @USAGE:
 # @DESCRIPTION: Configure and build the package.
 bentoo-sources_src_compile() {
-	debug-print-function ${FUNCNAME} "$@"
-
-	if [[ $DEBLOB_AVAILABLE == 1 ]] && use deblob; then
+	if [[ $DEBLOB_AVAILABLE == 1 ]] && use deblob ; then
 		echo ">>> Running deblob script ..."
 		sh "${T}/${DEBLOB_A}" --force || \
 			die "${RED}Deblob script failed to run!!!${NORMAL}"
@@ -324,8 +343,6 @@ bentoo-sources_src_compile() {
 # @USAGE:
 # @DESCRIPTION: Install a package to ${D}
 bentoo-sources_src_install() {
-	debug-print-function ${FUNCNAME} "$@"
-
 	local version_h_name="usr/src/linux-${KV_FULL}/include/linux"
 	local version_h="${ROOT}${version_h_name}"
 
@@ -338,16 +355,25 @@ bentoo-sources_src_install() {
 	cd "${S}" || die "${RED}cd ${S} failed${NORMAL}"
 	dodir /usr/src
 	echo ">>> Copying sources ..."
-
 	move "${WORKDIR}/linux-${KV_FULL}" "${D}/usr/src/linux-${KV_FULL}"
+
+	if use symlink; then
+		if [ -h "/usr/src/linux" ]; then
+			addwrite "/usr/src/linux"
+			unlink "/usr/src/linux" || die "${RED}unlink /usr/src/linux failed${NORMAL}"
+		elif [ -d "/usr/src/linux" ]; then
+			move "/usr/src/linux" "/usr/src/linux-old"
+		fi
+		dosym linux-${KV_FULL} \
+			"/usr/src/linux" ||
+			die "${RED}cannot install kernel symlink${NORMAL}"
+	fi
 }
 
 # @FUNCTION: pkg_postinst
 # @USAGE:
 # @DESCRIPTION: Called after image is installed to ${ROOT}
 bentoo-sources_pkg_postinst() {
-	debug-print-function ${FUNCNAME} "$@"
-
 	einfo " ${BLUE}If you are upgrading from a previous kernel, you may be interested${NORMAL}${BR}
  ${BLUE}in the following document:${NORMAL}${BR}
  ${BLUE}- General upgrade guide:${NORMAL} ${RED}http://www.gentoo.org/doc/en/kernel-upgrade.xml${NORMAL}${BR}
