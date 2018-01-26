@@ -17,7 +17,7 @@ fi
 
 LICENSE="GPL-2"
 SLOT="2"
-KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~ia64 ~ppc ~ppc64 ~sparc ~x86"
+
 IUSE="acl btrfs bcache cryptsetup debug elogind +gptfdisk +introspection iscsi lvm lsm nls selinux systemd zram"
 
 REQUIRED_USE="?? ( elogind systemd )"
