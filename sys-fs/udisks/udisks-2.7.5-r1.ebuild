@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v3 or later
 
 EAPI=6
-inherit autotools bash-completion-r1 eutils linux-info systemd udev xdg-utils
+inherit bash-completion-r1 eutils linux-info systemd udev xdg-utils
 
 DESCRIPTION="Daemon providing interfaces to work with storage devices"
 HOMEPAGE="https://www.freedesktop.org/wiki/Software/udisks"
@@ -11,12 +11,13 @@ if [[ ${PV} == 9999* ]] ; then
 	EGIT_REPO_URI="https://github.com/storaged-project/udisks.git"
 	KEYWORDS=""
 else
-	SRC_URI="https://github.com/storaged-project/${PN}/archive/${P}.tar.gz"
+	SRC_URI="https://github.com/storaged-project/udisks/releases/download/${P}/${P}.tar.bz2"
 	KEYWORDS="~amd64 ~x86"
 fi
 
 LICENSE="GPL-2"
 SLOT="2"
+KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~ia64 ~ppc ~ppc64 ~sparc ~x86"
 IUSE="acl btrfs bcache cryptsetup debug elogind +gptfdisk +introspection iscsi lvm lsm nls selinux systemd zram"
 
 REQUIRED_USE="?? ( elogind systemd )"
@@ -25,7 +26,7 @@ COMMON_DEPEND="
 	>=dev-libs/glib-2.36:2
 	>=dev-libs/libatasmart-0.19
 	>=sys-auth/polkit-0.110
-	>=sys-libs/libblockdev-2.14[crypt,lvm?]
+	>=sys-libs/libblockdev-2.14[cryptsetup,lvm?]
 	>=virtual/libgudev-165:=
 	virtual/udev
 	acl? ( virtual/acl )
@@ -56,15 +57,14 @@ DEPEND="${COMMON_DEPEND}
 	app-text/docbook-xsl-stylesheets
 	dev-libs/libxslt
 	>=dev-util/gdbus-codegen-2.32
-	>=dev-util/gtk-doc-1.3
-	gnome-base/gnome-common:3
-	sys-devel/autoconf-archive
+	>=dev-util/gtk-doc-am-1.3
 	>=sys-kernel/linux-headers-3.1
 	virtual/pkgconfig
 	nls? ( dev-util/intltool )
 "
-
-S="${WORKDIR}/${PN}-${P}"
+# If adding a eautoreconf, then these might be needed at buildtime:
+# gnome-base/gnome-common:3
+# sys-devel/autoconf-archive
 
 QA_MULTILIB_PATHS="usr/lib/udisks2/udisksd"
 
@@ -87,8 +87,6 @@ src_prepare() {
 
 	default
 
-	eautoreconf
-
 	if ! use systemd ; then
 		sed -i -e 's:libsystemd-login:&disable:' configure || die
 	fi
@@ -106,15 +104,15 @@ src_configure() {
 		--with-systemdsystemunitdir="$(systemd_get_systemunitdir)"
 		--with-udevdir="$(get_udevdir)"
 		$(use_enable acl)
+		$(use_enable bcache)
 		$(use_enable debug)
 		$(use_enable introspection)
+		$(use_enable iscsi)
 		$(use_enable lvm lvm2)
 		$(use_enable lvm lvmcache)
-		$(use_enable nls)
-		$(use_enable iscsi)
-		$(use_enable zram)
 		$(use_enable lsm)
-		$(use_enable bcache)
+		$(use_enable nls)
+		$(use_enable zram)
 	)
 	econf "${myeconfargs[@]}"
 }
