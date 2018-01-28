@@ -63,6 +63,10 @@ dev-libs/cyrus-sasl:sample - Enable sample client and server
 dev-libs/cyrus-sasl:srp - Enable SRP authentication
 dev-libs/cyrus-sasl:urandom - Use /dev/urandom instead of /dev/random
 games-engines/openmw:devtools - Install development tools like bsatool, esmtool and opencs.
+kde-apps/dolphin-plugins:bazaar - Enable support for the bazaar VCS
+kde-apps/dolphin-plugins:dropbox - Enable support for the dropbox fileviewer plugin
+kde-apps/dolphin-plugins:git - Enable support for the git VCS
+kde-apps/dolphin-plugins:mercurial - Enable support for the mercurial VCS
 net-misc/trackma:urwid - Install dev-python/urwid
 sys-apps/cockpit:pcp - Install sys-apps/pcp
 sys-apps/pcp:discovery - Support for service discovery
