@@ -10,9 +10,9 @@ LICENSE="metapackage"
 SLOT="0"
 KEYWORDS="amd64 arm x86"
 
-IUSE="addons bluetooth drkonqi filelight kamera kgpg kdialog kdeconnect kdepim\
- kmix kpat krusader ksystemlog kwalletmanager kwalletpam networkmanager okular\
- redshift telepathy touchpad wallpapers khelpcenter vault pulseaudio"
+IUSE="addons bluetooth drkonqi filelight git kamera kgpg kdialog kdeconnect\
+ kdepim kmix kpat krusader ksystemlog kwalletmanager kwalletpam networkmanager\
+ okular redshift telepathy touchpad wallpapers khelpcenter vault pulseaudio"
 
 KLV="17.12.50"
 
@@ -61,11 +61,13 @@ RDEPEND="${DEPEND}
 	bluetooth? ( <kde-plasma/bluedevil-${KLV} )
 	drkonqi? ( <kde-plasma/drkonqi-${KLV} )
 	filelight? ( <kde-apps/filelight-${KLV} )
+	git? ( dev-vcs/git-cola )
 	kamera? ( <kde-apps/kamera-${KLV} )
 	kdeconnect? ( kde-misc/kdeconnect )
 	kdepim? ( <kde-apps/kdepim-meta-${KLV} )
 	kdialog? ( <kde-apps/kdialog-${KLV} )
 	kgpg? ( <kde-apps/kgpg-${KLV} )
+	khelpcenter? ( <kde-apps/khelpcenter-${KLV} )
 	kmix? ( <kde-apps/kmix-${KLV} )
 	kpat? ( <kde-apps/kpat-${KLV} )
 	ksystemlog? ( <kde-apps/ksystemlog-${KLV} )
@@ -77,7 +79,6 @@ RDEPEND="${DEPEND}
 	redshift? ( kde-misc/plasma-applet-redshift-control )
 	telepathy? ( <kde-apps/plasma-telepathy-meta-${KLV} )
 	touchpad? ( kde-plasma/plasma-desktop[touchpad] )
-	khelpcenter? ( <kde-apps/khelpcenter-${KLV} )
 	vault? ( <kde-plasma/plasma-vault-${KLV} )
 	wallpapers? ( <kde-plasma/plasma-workspace-wallpapers-${KLV} )
 
