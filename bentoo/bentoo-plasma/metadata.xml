@@ -25,6 +25,7 @@
 		<flag name='kwalletpam'>Install kde-plasma/kwallet-pam</flag>
 		<flag name='networkmanager'>Install <kde-plasma/plasma-nm</flag>
 		<flag name='okular'>Install kde-apps/okular</flag>
+		<flag name='plymouth'>Install kde-plasma/breeze-plymouth and kde-plasma/plymouth-kcm</flag>
 		<flag name='pulseaudio'>Install <kde-plasma/plasma-pa</flag>
 		<flag name='redshift'>Install kde-misc/plasma-applet-redshift-control</flag>
 		<flag name='telepathy'>Install kde-apps/plasma-telepathy-meta</flag>
