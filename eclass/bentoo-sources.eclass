@@ -59,18 +59,12 @@ detect_version() {
 	kname="linux-${kversion}.tar.${extension}"
 	kurl="mirror://kernel/linux/kernel/v${VERSION}.x"
 	KERNEL_URI="${KERNEL_URI} ${kurl}/${kname}"
-	if [ "${SUBLEVEL}" != "0" ] || [ "${PV}" != "${KMV}" ]; then
+	if [ "${SUBLEVEL}" != "0" ] && [ "${PV}" != "${KMV}" ]; then
 		pversion="${PV}"
 		pname="patch-${pversion}.${extension}"
 		KERNEL_URI="${KERNEL_URI} ${kurl}/${pname}"
-	fi
-
-	# 0 for 3.4.0
-	if [ "${SUBLEVEL}" = "0" ] || [ "${PV}" = "${KMV}" ] ; then
+	else
 		PV="${KMV}" # default PV=3.4.0 new PV=3.4
-		if [[ "${PR}" == "r0" ]] ; then
-			SKIP_UPDATE=1 # Skip update to latest upstream
-		fi
 	fi
 
 	# ebuild default values setup settings
@@ -83,7 +77,7 @@ detect_version
 
 DESCRIPTION="Full sources for the Linux kernel"
 HOMEPAGE="http://www.kernel.org"
-LICENSE="GPL-2"
+LICENSE="GPL-2 !deblob? ( linux-firmware )"
 SRC_URI="${KERNEL_URI}"
 SLOT=${SLOT:-${KMV}}
 IUSE="brand deblob symlink"
@@ -120,22 +114,12 @@ init_variables() {
 
 init_variables
 
-if [[ ${DEBLOB_AVAILABLE} == "1" ]]; then
-	IUSE="${IUSE} deblob"
-
-	# Reflect that kernels contain firmware blobs unless otherwise
-	# stripped
-	LICENSE="${LICENSE} !deblob? ( linux-firmware )"
-
-	if [[ -n PATCHLEVEL ]]; then
-		DEBLOB_PV="${VERSION}.${PATCHLEVEL}.${SUBLEVEL}"
-	else
-		DEBLOB_PV="${VERSION}.${SUBLEVEL}"
-	fi
-
-	if [[ "${VERSION}" -ge 3 ]]; then
-		DEBLOB_PV="${VERSION}.${PATCHLEVEL}"
-	fi
+# @FUNCTION: init_deblob
+# @INTERNAL
+# @DESCRIPTION:
+# Internal function initializing deblob variables.
+init_deblob() {	
+	DEBLOB_PV="${VERSION}.${PATCHLEVEL}"
 
 	# deblob svn tag, default is -gnu, to change, use K_DEBLOB_TAG in ebuild
 	K_DEBLOB_TAG=${K_DEBLOB_TAG:--gnu}
@@ -156,11 +140,9 @@ if [[ ${DEBLOB_AVAILABLE} == "1" ]]; then
 			${DEBLOB_URI}
 			${DEBLOB_CHECK_URI}
 		)"
-else
-	# We have no way to deblob older kernels, so just mark them as
-	# tainted with non-libre materials.
-	LICENSE="${LICENSE} linux-firmware"
-fi
+}
+
+init_deblob
 
 # iternal function
 #
@@ -265,7 +247,7 @@ bentoo-sources_src_unpack() {
 		ipatch push . "${FILESDIR}/${KMV}/brand"
 	fi
 
-	if [[ $DEBLOB_AVAILABLE == 1 ]] && use deblob ; then
+	if use deblob ; then
 		cp "${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}/${DEBLOB_A}" "${T}" || die "${RED}cp ${DEBLOB_A} failed${NORMAL}"
 		cp "${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}/${DEBLOB_CHECK_A}" "${T}/deblob-check" || die "${RED}cp ${DEBLOB_CHECK_A} failed${NORMAL}"
 		chmod +x "${T}/${DEBLOB_A}" "${T}/deblob-check" || die "${RED}chmod deblob scripts failed${NORMAL}"
@@ -332,7 +314,7 @@ bentoo-sources_src_prepare() {
 # @USAGE:
 # @DESCRIPTION: Configure and build the package.
 bentoo-sources_src_compile() {
-	if [[ $DEBLOB_AVAILABLE == 1 ]] && use deblob ; then
+	if use deblob ; then
 		echo ">>> Running deblob script ..."
 		sh "${T}/${DEBLOB_A}" --force || \
 			die "${RED}Deblob script failed to run!!!${NORMAL}"
