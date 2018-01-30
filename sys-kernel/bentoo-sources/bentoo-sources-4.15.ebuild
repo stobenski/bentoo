@@ -2,7 +2,6 @@
 # Distributed under the terms of the GNU General Public License v3 or later
 
 EAPI="6"
-DEBLOB_AVAILABLE="1"
 inherit bentoo-sources
 
 DESCRIPTION="Full sources for the Linux kernel"
