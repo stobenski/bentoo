@@ -60,8 +60,7 @@ detect_version() {
 	kurl="mirror://kernel/linux/kernel/v${VERSION}.x"
 	KERNEL_URI="${KERNEL_URI} ${kurl}/${kname}"
 	if [ "${SUBLEVEL}" != "0" ] && [ "${PV}" != "${KMV}" ]; then
-		pversion="${PV}"
-		pname="patch-${pversion}.${extension}"
+		pname="patch-${PV}.${extension}"
 		KERNEL_URI="${KERNEL_URI} ${kurl}/${pname}"
 	else
 		PV="${KMV}" # default PV=3.4.0 new PV=3.4
@@ -119,7 +118,7 @@ init_variables
 # @DESCRIPTION:
 # Internal function initializing deblob variables.
 init_deblob() {	
-	DEBLOB_PV="${VERSION}.${PATCHLEVEL}"
+	DEBLOB_PV="${KMV}"
 
 	# deblob svn tag, default is -gnu, to change, use K_DEBLOB_TAG in ebuild
 	K_DEBLOB_TAG=${K_DEBLOB_TAG:--gnu}
@@ -127,14 +126,9 @@ init_deblob() {
 	DEBLOB_CHECK_A="deblob-check-${DEBLOB_PV}"
 	DEBLOB_HOMEPAGE="http://www.fsfla.org/svn/fsfla/software/linux-libre/releases/tags"
 	DEBLOB_URI_PATH="${DEBLOB_PV}${K_DEBLOB_TAG}"
-	if ! has "${EAPI:-0}" 0 1 ; then
-		DEBLOB_CHECK_URI="${DEBLOB_HOMEPAGE}/${DEBLOB_URI_PATH}/deblob-check -> ${DEBLOB_CHECK_A}"
-	else
-		DEBLOB_CHECK_URI="mirror://gentoo/${DEBLOB_CHECK_A}"
-	fi
+	DEBLOB_CHECK_URI="${DEBLOB_HOMEPAGE}/${DEBLOB_URI_PATH}/deblob-check -> ${DEBLOB_CHECK_A}"
 	DEBLOB_URI="${DEBLOB_HOMEPAGE}/${DEBLOB_URI_PATH}/${DEBLOB_A}"
 	HOMEPAGE="${HOMEPAGE} ${DEBLOB_HOMEPAGE}"
-
 	KERNEL_URI="${KERNEL_URI}
 		deblob? (
 			${DEBLOB_URI}
