@@ -64,6 +64,7 @@ detect_version() {
 		KERNEL_URI="${KERNEL_URI} ${kurl}/${pname}"
 	else
 		PV="${KMV}" # default PV=3.4.0 new PV=3.4
+		SKIP_UPDATE=1
 	fi
 
 	# ebuild default values setup settings
