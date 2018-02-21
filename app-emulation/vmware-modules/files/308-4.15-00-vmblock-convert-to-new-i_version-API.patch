@@ -1,0 +1,20 @@
+diff -Naur a/vmblock-only/linux/inode.c b/vmblock-only/linux/inode.c
+--- a/vmblock-only/linux/inode.c	2018-02-21 14:56:45.262106210 +0300
++++ b/vmblock-only/linux/inode.c	2018-02-21 14:40:40.304083216 +0300
+@@ -29,6 +29,7 @@
+ #include <linux/time.h>
+ #include <linux/namei.h>
+ #include <linux/cred.h>
++#include <linux/iversion.h>
+ 
+ #include "vmblockInt.h"
+ #include "filesystem.h"
+@@ -155,7 +156,7 @@
+ 
+    inode->i_mode = S_IFLNK | S_IRWXUGO;
+    inode->i_size = INODE_TO_IINFO(inode)->nameLen;
+-   inode->i_version = 1;
++   inode_set_iversion(inode, 1);
+    inode->i_atime = inode->i_mtime = inode->i_ctime = current_time(inode);
+ #if LINUX_VERSION_CODE < KERNEL_VERSION(3, 10, 0)
+    inode->i_uid = inode->i_gid = 0;
