@@ -77,7 +77,7 @@ RDEPEND="${DEPEND}
 	okular? ( <kde-apps/okular-${KLV} )
 	plymouth? ( kde-plasma/breeze-plymouth kde-plasma/plymouth-kcm )
 	pulseaudio? ( <kde-plasma/plasma-pa-${KLV} )
-	redshift? ( kde-misc/plasma-applet-redshift-control )
+	redshift? ( kde-misc/plasma-redshift-control )
 	telepathy? ( <kde-apps/plasma-telepathy-meta-${KLV} )
 	touchpad? ( kde-plasma/plasma-desktop[touchpad] )
 	vault? ( <kde-plasma/plasma-vault-${KLV} )
