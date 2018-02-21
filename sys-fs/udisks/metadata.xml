@@ -1,17 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
-	<maintainer type="person">
-		<email>sudormrfhalt@gmail.com</email>
-		<name>Andrey Ovcharov</name>
+	<maintainer type="project">
+		<email>freedesktop-bugs@gentoo.org</email>
 	</maintainer>
 	<use>
-		<flag name='lvm'>Install sys-fs/lvm2</flag>
-		<flag name='lsm'>Install sys-libs/libstoragemgmt </flag>
-		<flag name='lvmcache'>lvmcache support</flag>
-		<flag name='iscsi'>Install net-libs/libiscsi</flag>
-		<flag name='btrfs'>btrfs support</flag>
-		<flag name='zram'>zram support</flag>
-		<flag name='bcache'>bcache support</flag>
+		<flag name="cryptsetup">Enable <pkg>sys-fs/cryptsetup</pkg> support</flag>
+		<flag name="elogind">Use <pkg>sys-auth/elogind</pkg> for session tracking</flag>
+		<flag name="gptfdisk">Pull in <pkg>sys-apps/gptfdisk</pkg> for sgdisk command as used by partitioning functionality</flag>
+		<flag name="lvm">Add support for Logical Volume Management via <pkg>sys-fs/lvm2</pkg>.</flag>
+		<flag name="remote-access">Control whether connections from other clients over LAN are allowed</flag>
+		<flag name="systemd">Support <pkg>sys-apps/systemd</pkg>'s logind</flag>
 	</use>
 </pkgmetadata>

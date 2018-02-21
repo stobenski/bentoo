@@ -1,4 +1,4 @@
-# Copyright 1999-2017 The Bentoo Authors. All rights reserved.
+# Copyright 1999-2018 The Bentoo Authors. All rights reserved.
 # Distributed under the terms of the GNU General Public License v3 or later
 
 EAPI=6
@@ -43,7 +43,7 @@ COMMON_DEPEND="
 # gptfdisk -> src/udiskslinuxpartition.c -> sgdisk (see also #412801#c1)
 # util-linux -> mount, umount, swapon, swapoff (see also #403073)
 RDEPEND="${COMMON_DEPEND}
-	>=sys-apps/util-linux-2.20.1-r2
+	>=sys-apps/util-linux-2.30
 	>=sys-block/parted-3
 	virtual/eject
 	cryptsetup? (
