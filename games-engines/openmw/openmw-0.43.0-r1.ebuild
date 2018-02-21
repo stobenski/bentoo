@@ -1,12 +1,12 @@
-# Copyright 1999-2017 The Bentoo Authors. All rights reserved.
+# Copyright 1999-2018 The Bentoo Authors. All rights reserved.
 # Distributed under the terms of the GNU General Public License v3 or later
 
 EAPI=6
 
-inherit cmake-utils gnome2-utils
+inherit cmake-utils gnome2-utils readme.gentoo-r1
 
 DESCRIPTION="Open source reimplementation of TES III: Morrowind"
-HOMEPAGE="https://openmw.org"
+HOMEPAGE="https://openmw.org/"
 SRC_URI="https://github.com/OpenMW/openmw/archive/${P}.tar.gz"
 
 LICENSE="GPL-3 MIT BitstreamVera ZLIB"
@@ -16,8 +16,14 @@ IUSE="doc devtools +qt5"
 RESTRICT="mirror"
 
 RDEPEND="
-	( >=dev-games/openscenegraph-3.3.4[ffmpeg,jpeg,png,sdl,svg,truetype,zlib] >=dev-games/openscenegraph-qt-3.3.4 )
 	dev-games/mygui
+	|| (
+		(
+			>=dev-games/openscenegraph-3.5.5[ffmpeg,jpeg,png,sdl,svg,truetype,zlib]
+			dev-games/openscenegraph-qt
+		)
+		<dev-games/openscenegraph-3.5.5[ffmpeg,jpeg,png,qt5,sdl,svg,truetype,zlib]
+	)
 	dev-libs/boost:=[threads]
 	dev-libs/tinyxml[stl]
 	media-libs/libsdl2[joystick,opengl,video,X]
@@ -35,12 +41,7 @@ RDEPEND="
 "
 DEPEND="${RDEPEND}
 	virtual/pkgconfig
-	doc? (
-		app-doc/doxygen
-		dev-python/sphinx
-		media-gfx/graphviz
-	)
-"
+	doc? ( app-doc/doxygen[doc] dev-python/sphinx )"
 
 S="${WORKDIR}/${PN}-${P}"
 
@@ -62,10 +63,11 @@ src_configure() {
 
 	local mycmakeargs=(
 		-DBUILD_BSATOOL=$(usex devtools)
+		-DBUILD_DOCS=$(usex doc)
 		-DBUILD_ESMTOOL=$(usex devtools)
-		-DBUILD_OPENCS=$(usex devtools $(usex qt5))
-		-DBUILD_NIFTEST=$(usex devtools)
 		-DBUILD_LAUNCHER=$(usex qt5)
+		-DBUILD_NIFTEST=$(usex devtools)
+		-DBUILD_OPENCS=$(usex devtools $(usex qt5))
 		-DBUILD_WIZARD=$(usex qt5)
 		-DBUILD_UNITTESTS=OFF
 		-DGLOBAL_DATA_PATH=/usr/share
@@ -83,21 +85,37 @@ src_compile() {
 	cmake-utils_src_compile
 
 	if use doc ; then
-		emake -C "${CMAKE_BUILD_DIR}" doc
+		cmake-utils_src_compile doc
 		find "${CMAKE_BUILD_DIR}"/docs/Doxygen/html \
 			-name '*.md5' -type f -delete || die
+		HTML_DOCS=( "${CMAKE_BUILD_DIR}"/docs/Doxygen/html/. )
 	fi
 }
 
 src_install() {
 	cmake-utils_src_install
 
-	# about 43k files, dodoc seems to have trouble
-	if use doc ; then
-		dodir "/usr/share/doc/${PF}"
-		mv "${CMAKE_BUILD_DIR}"/docs/Doxygen/html \
-			"${D}/usr/share/doc/${PF}/" || die
+	local DOC_CONTENTS="
+	You need the original Morrowind data files. If you haven't
+	installed them yet, you can install them straight via the
+	installation wizard which is the officially supported method
+	(either by using the launcher or by calling 'openmw-wizard'
+	directly).\n"
+
+	if ! use qt5; then
+		local DOC_CONTENTS+="\n\n
+		USE flag 'qt5' is disabled, 'openmw-launcher' and
+		'openmw-wizard' are not available. You are on your own for
+		making the Morrowind data files available and pointing
+		openmw at them.\n\n
+		Additionally; you must import the Morrowind.ini file before
+		running openmw with the Morrowind data files for the first
+		time. Typically this can be done like so:\n\n
+		\t mkdir -p ~/.config/openmw\n
+		\t openmw-iniimporter /path/to/Morrowind.ini ~/.config/openmw/openmw.cfg"
 	fi
+
+	readme.gentoo_create_doc
 }
 
 pkg_preinst() {
@@ -106,27 +124,7 @@ pkg_preinst() {
 
 pkg_postinst() {
 	gnome2_icon_cache_update
-
-	elog "You need the original Morrowind data files. If you haven't"
-	elog "installed them yet, you can install them straight via the"
-	elog "installation wizard which is the officially supported method"
-	elog "(either by using the launcher or by calling 'openmw-wizard'"
-	elog "directly)."
-
-	if ! use qt5; then
-		elog
-		elog "'qt5' USE flag is disabled, 'openmw-launcher' and"
-		elog "'openmw-wizard' are not available. You are on your own for"
-		elog "making the Morrowind data files available and pointing"
-		elog "openmw at them."
-		elog
-		elog "Additionally; you must import the Morrowind.ini file before"
-		elog "running openmw with the Morrowind data files for the first"
-		elog "time. Typically this can be done like so:"
-		elog
-		elog "    mkdir -p ~/.config/openmw"
-		elog "    openmw-iniimporter /path/to/Morrowind.ini ~/.config/openmw/openmw.cfg"
-	fi
+	readme.gentoo_print_elog
 }
 
 pkg_postrm() {
