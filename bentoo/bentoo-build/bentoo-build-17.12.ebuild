@@ -1,4 +1,4 @@
-# Copyright 1999-2017 The Bentoo Authors. All rights reserved.
+# Copyright 1999-2018 The Bentoo Authors. All rights reserved
 # Distributed under the terms of the GNU General Public License v3 or later
 
 EAPI=6
