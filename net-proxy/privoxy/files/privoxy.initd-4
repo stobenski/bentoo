@@ -1,0 +1,103 @@
+#!/sbin/openrc-run
+# Copyright 1999-2018 The Bentoo Authors. All rights reserved
+# Distributed under the terms of the GNU General Public License v3 or later
+
+extra_started_commands="reload restart kill condrestart status top"
+
+PRIVOXY_PRG="privoxy"
+PRIVOXY_BIN="/usr/sbin/${PRIVOXY_PRG}"
+PRIVOXY_CONF="/etc/privoxy/config"
+PRIVOXY_USER="privoxy"
+PRIVOXY_GROUP="privoxy"
+PRIVOXY_PID="/var/run/privoxy.pid"
+
+depend() {
+	use net
+}
+
+start() {
+	# start daemon
+	if [ ! -f "${PRIVOXY_CONF}" ]; then
+		eerror "Configuration file ${PRIVOXY_CONF} not found!"
+		return 1
+	fi
+
+	ebegin "Starting ${SVCNAME}: "
+	if [ ! -f "${PRIVOXY_PID}" ]; then
+		start-stop-daemon --start --quiet --exec "${PRIVOXY_BIN}" --pidfile "${PRIVOXY_PID}" --user "${PRIVOXY_USER}" "${PRIVOXY_CONF}" 2>/dev/tty12
+	elif [ $(/bin/ps -e|/bin/grep "${PRIVOXY_PRG}"|/usr/bin/wc -l) -lt 3 ]; then
+		ewarn "Zombie lock file found"
+		/bin/rm -f /var/lock/"${PRIVOXY_PRG}" "${PRIVOXY_PID}"
+		einfo "Retrying..."
+		start
+	else
+		ewarn "Already running"
+	fi
+	eend $?
+}
+
+stop() {
+	# stop daemon
+	ebegin "Stopping ${SVCNAME}: "
+	if [ -f "${PRIVOXY_PID}" ]; then
+		/bin/kill $(/bin/cat "${PRIVOXY_PID}") \
+			&& /bin/rm -f /var/lock/"${PRIVOXY_PRG}" "${PRIVOXY_PID}" \
+		echo
+	else
+		ewarn " Not Running"
+	fi
+	eend $?
+}
+
+reload() {
+	ebegin "Sending SIGHUP to ${SVCNAME}: "
+	if [ -f "${PRIVOXY_PID}" ] ; then
+		/bin/kill -HUP $(cat "${PRIVOXY_PID}")
+	fi
+	eend $?
+}
+
+restart() {
+	stop
+	start
+}
+
+kill() {
+	ebegin "Kill all ${SVCNAME}: "
+		/bin/rm -f /var/lock/"${PRIVOXY_PRG}" "${PRIVOXY_PID}"
+		/bin/killall "${PRIVOXY_PRG}"
+	eend $?
+}
+
+condrestart() {
+	ebegin "Restart ${SVCNAME} only if already running: "
+	if [ -f "${PRIVOXY_PID}" ] ; then
+		stop
+		start
+	fi
+	eend $?
+}
+
+status() {
+	ebegin "Status ${SVCNAME}: "
+	/bin/ps ax|/bin/grep "${PRIVOXY_PRG}"|/bin/grep -v 'grep\|init\.d\|etc'
+	eend $?
+}
+
+top() {
+	ebegin "Top ${SVCNAME}: "
+	if [ -f "${PRIVOXY_PID}" ]; then
+		a=""
+		for i in $(/sbin/pidof "${PRIVOXY_PRG}") ; do
+			a="$a -p $i"
+		done
+		/usr/bin/top $a
+	fi
+	eend $?
+}
+
+#usage() {
+#	einfo $"Usage: $PRIVOXY_PRG {start|stop|reload|restart|condrestart|status|top|kill}"
+#}
+
+# vim: set ts=4 :
