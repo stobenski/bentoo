@@ -89,6 +89,7 @@ PDEPEND="${PDEPEND}
 	mail-client/mutt
 	mail-filter/procmail
 	media-fonts/iso_latin_1
+	media-fonts/powerline-fonts
 	media-gfx/graphviz
 	media-sound/alsa-utils
 	net-dialup/ppp
