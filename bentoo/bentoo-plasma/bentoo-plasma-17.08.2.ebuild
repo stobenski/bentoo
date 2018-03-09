@@ -10,7 +10,7 @@ LICENSE="metapackage"
 SLOT="0"
 KEYWORDS="amd64 arm x86"
 
-IUSE="addons bluetooth drkonqi filelight git kamera kgpg kdialog kdeconnect\
+IUSE="addons bluetooth drkonqi filelight git kamera kget kgpg kdialog kdeconnect\
  kdepim kmix kpat krusader ksystemlog kwalletmanager kwalletpam networkmanager\
  okular redshift telepathy touchpad wallpapers khelpcenter vault plymouth pulseaudio"
 
@@ -66,6 +66,7 @@ RDEPEND="${DEPEND}
 	kdeconnect? ( kde-misc/kdeconnect )
 	kdepim? ( <kde-apps/kdepim-meta-${KLV} )
 	kdialog? ( <kde-apps/kdialog-${KLV} )
+	kget? ( <kde-apps/kget-${KLV} )
 	kgpg? ( <kde-apps/kgpg-${KLV} )
 	khelpcenter? ( <kde-apps/khelpcenter-${KLV} )
 	kmix? ( <kde-apps/kmix-${KLV} )
