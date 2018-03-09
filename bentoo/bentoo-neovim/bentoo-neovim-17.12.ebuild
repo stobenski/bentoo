@@ -3,21 +3,20 @@
 
 EAPI=6
 
-DESCRIPTION="Bentoo meta ebuild to install all apps"
+DESCRIPTION="Bentoo neovim meta ebuild"
 HOMEPAGE="https://bitbucket.org/redeyeteam/bentoo"
 
 LICENSE="metapackage"
 SLOT="0"
 KEYWORDS="amd64 arm x86"
 
-IUSE="plasma proxy"
+IUSE="qt"
+
+S="${WORKDIR}"
+
 DEPEND=""
+RDEPEND="${DEPEND}
 
-RDEPEND=""
-
-PDEPEND="
-	plasma? ( bentoo/bentoo-plasma )
-	proxy? ( bentoo/bentoo-proxy )
-	bentoo/bentoo-system
-	( || ( bentoo/bentoo-neovim bentoo/bentoo-vim ) )
-"
+	app-editors/neovim
+	qt? ( app-editors/neovim-qt )
+	"
