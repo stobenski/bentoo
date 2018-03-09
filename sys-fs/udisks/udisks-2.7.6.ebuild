@@ -12,7 +12,7 @@ if [[ ${PV} == 9999* ]] ; then
 	KEYWORDS=""
 else
 	SRC_URI="https://github.com/storaged-project/udisks/releases/download/${P}/${P}.tar.bz2"
-	KEYWORDS="~amd64 ~x86"
+	KEYWORDS="~amd64 ~arm ~x86"
 fi
 
 LICENSE="GPL-2"
@@ -39,8 +39,6 @@ COMMON_DEPEND="
 	dev-libs/volume_key
 	sys-libs/libblockdev
 "
-
-# gptfdisk -> src/udiskslinuxpartition.c -> sgdisk (see also #412801#c1)
 # util-linux -> mount, umount, swapon, swapoff (see also #403073)
 RDEPEND="${COMMON_DEPEND}
 	>=sys-apps/util-linux-2.30
@@ -66,8 +64,6 @@ DEPEND="${COMMON_DEPEND}
 # gnome-base/gnome-common:3
 # sys-devel/autoconf-archive
 
-QA_MULTILIB_PATHS="usr/lib/udisks2/udisksd"
-
 DOCS=( AUTHORS HACKING NEWS README.md )
 
 pkg_setup() {
@@ -75,7 +71,6 @@ pkg_setup() {
 	if use amd64 || use arm || use ppc || use ppc64 || use x86; then
 		CONFIG_CHECK="~!IDE" #319829
 		CONFIG_CHECK+=" ~TMPFS_POSIX_ACL" #412377
-		CONFIG_CHECK+=" ~SWAP" # https://forums.gentoo.org/viewtopic-t-923640.html
 		CONFIG_CHECK+=" ~NLS_UTF8" #425562
 		kernel_is lt 3 10 && CONFIG_CHECK+=" ~USB_SUSPEND" #331065, #477278
 		linux-info_pkg_setup
