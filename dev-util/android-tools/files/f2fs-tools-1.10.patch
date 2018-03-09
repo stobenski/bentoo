@@ -1,0 +1,22 @@
+--- a/system/extras/f2fs_utils/f2fs_ioutils.c 1970-01-01 05:00:00.000000000 +0500
++++ b/system/extras/f2fs_utils/f2fs_ioutils.c 2017-01-04 22:26:56.155205508 +0500
+@@ -31,7 +31,5 @@
+ #include <assert.h>
+-#include <asm/types.h>
+ #include <dlfcn.h>
+ #include <errno.h>
+ #include <fcntl.h>
+-#include <linux/fs.h>
+ #include <stdio.h>
+@@ -158,5 +158,6 @@
+ 
+-void f2fs_finalize_device(void)
+-{
+-}
+ 
++int f2fs_finalize_device(void)
++{
++       return 0;
++}
+ 
+
