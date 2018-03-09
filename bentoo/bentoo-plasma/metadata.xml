@@ -15,6 +15,7 @@
 		<flag name='kdeconnect'>Install kde-misc/kdeconnect</flag>
 		<flag name='kdepim'>Install kde-apps/kdepim-meta</flag>
 		<flag name='kdialog'>Install kde-apps/kdialog</flag>
+		<flag name='kget'>Install kde-apps/kget</flag>
 		<flag name='kgpg'>Install kde-apps/kgpg</flag>
 		<flag name='khelpcenter'>Install <kde-apps/khelpcenter</flag>
 		<flag name='kmix'>Install kde-apps/kmix</flag>
