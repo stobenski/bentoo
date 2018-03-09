@@ -2,18 +2,26 @@
 # Distributed under the terms of the GNU General Public License v3 or later
 
 EAPI="6"
-inherit git-r3 systemd udev
+inherit systemd udev
+
+MY_PV="${PV/_p/_r}"
+MY_P=${PN}-${MY_PV}
 
 KEYWORDS="~amd64 ~x86 ~arm-linux ~x86-linux"
 DESCRIPTION="Android platform tools (adb and fastboot)"
-HOMEPAGE="https://sites.google.com/a/android.com/tools/"
-SRC_URI=""
+HOMEPAGE="https://android.googlesource.com/platform/system/core/+/android-${MY_PV}
+https://android.googlesource.com/platform/system/extras/+/android-${MY_PV}
+https://github.com/M0Rf30/android-udev-rules/releases"
 
-MY_VER="${PV/p/r}"
-MY_B="android-${MY_VER}"
+core_commit="ac8169f45dc9e5332d3ec24d0b14f812668b0c8e" # ! android-${MY_PV} commit
+android_udev_rules_commit="20180112" # ! Latest
+SRC_URI="https://android.googlesource.com/platform/system/core/+archive/${core_commit}.tar.gz -> ${MY_P}-core.tar.gz
+https://android.googlesource.com/platform/system/extras/+archive/android-${MY_PV}/ext4_utils.tar.gz -> ${MY_P}-extras-ext4_utils.tar.gz
+https://android.googlesource.com/platform/system/extras/+archive/android-${MY_PV}/f2fs_utils.tar.gz -> ${MY_P}-extras-f2fs_utils.tar.gz
+https://github.com/M0Rf30/android-udev-rules/raw/${android_udev_rules_commit}/51-android.rules -> ${android_udev_rules_commit}-51-android.rules"
 
-# The entire source code is Apache-2.0, except for fastboot which is BSD.
-LICENSE="Apache-2.0 BSD"
+# The entire source code is Apache-2.0, except for fastboot which is BSD-2.
+LICENSE="Apache-2.0 BSD-2"
 SLOT="0"
 IUSE=""
 
@@ -30,27 +38,21 @@ DEPEND="${RDEPEND}
 
 S="${WORKDIR}"
 
+PATCHES=(
+	"${FILESDIR}"/gcc7-snprintf.patch
+	"${FILESDIR}"/openssl.patch
+	"${FILESDIR}"/${P}-Makefile.patch
+)
+
 src_unpack() {
-	EGIT_CLONE_TYPE="mirror"
+	mkdir -p "${S}/system/core" && cd "${S}/system/core"
+	tar xvzf "${DISTDIR}/${MY_P}-core.tar.gz" || die "unpacking ${MY_P}-core.tar.gz failed"
+	mkdir -p "${S}/system/extras/ext4_utils" && cd "${S}/system/extras/ext4_utils"
+	tar xvzf "${DISTDIR}/${MY_P}-extras-ext4_utils.tar.gz" || die "unpacking ${MY_P}-extras-ext4_utils.tar.gz failed"
+	mkdir -p "${S}/system/extras/f2fs_utils" && cd "${S}/system/extras/f2fs_utils"
+	tar xvzf "${DISTDIR}/${MY_P}-extras-f2fs_utils.tar.gz" || die "unpacking ${MY_P}-extras-f2fs_utils.tar.gz failed"
 
-	local r
-	for r in system/core system/extras; do
-		EGIT_REPO_URI="https://android.googlesource.com/platform/${r}"
-		EGIT_CHECKOUT_DIR="${WORKDIR}/${r}"
-		EGIT_BRANCH="${MY_B}"
-		EGIT_COMMIT="$EGIT_BRANCH"
-		git-r3_src_unpack
-		unset EGIT_REPO_URI EGIT_CHECKOUT_DIR EGIT_BRANCH EGIT_COMMIT
-	done
-}
-
-src_prepare() {
-	#ipatch push . "${FILESDIR}"/${P}-musl-fixes.patch
-	ipatch push . "${FILESDIR}"/gcc7-snprintf.patch
-	ipatch push . "${FILESDIR}"/openssl.patch
-	ipatch push . "${FILESDIR}"/${P}-Makefile.patch
-
-	eapply_user
+	cd "${S}"
 }
 
 src_install() {
@@ -59,7 +61,7 @@ src_install() {
 	doexe "${WORKDIR}"/system/core/fastboot/fastboot
 	dodoc "${WORKDIR}"/system/core/adb/NOTICE "${WORKDIR}"/system/core/adb/{OVERVIEW,SERVICES,SYNC}.TXT
 	# udev rules
-	udev_dorules "${FILESDIR}"/51-android.rules
+	udev_dorules "${DISTDIR}/${android_udev_rules_commit}-51-android.rules"
 	# systemd unit file
 	systemd_dounit "${FILESDIR}"/adb.service
 }
