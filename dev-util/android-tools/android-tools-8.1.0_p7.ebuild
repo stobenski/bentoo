@@ -18,7 +18,7 @@ android_udev_rules_commit="20180112" # ! Latest
 SRC_URI="https://android.googlesource.com/platform/system/core/+archive/${core_commit}.tar.gz -> ${MY_P}-core.tar.gz
 https://android.googlesource.com/platform/system/extras/+archive/android-${MY_PV}/ext4_utils.tar.gz -> ${MY_P}-extras-ext4_utils.tar.gz
 https://android.googlesource.com/platform/system/extras/+archive/android-${MY_PV}/f2fs_utils.tar.gz -> ${MY_P}-extras-f2fs_utils.tar.gz
-https://github.com/M0Rf30/android-udev-rules/raw/${android_udev_rules_commit}/51-android.rules -> ${android_udev_rules_commit}-51-android.rules"
+https://github.com/M0Rf30/android-udev-rules/raw/${android_udev_rules_commit}/51-android.rules -> 51-android.rules"
 
 # The entire source code is Apache-2.0, except for fastboot which is BSD-2.
 LICENSE="Apache-2.0 BSD-2"
@@ -31,7 +31,6 @@ DEPEND="${RDEPEND}
 	dev-cpp/gtest
 	dev-libs/libusb
 	dev-libs/libpcre
-	sys-devel/ipatch
 	sys-fs/f2fs-tools
 	sys-libs/libselinux
 	sys-libs/zlib"
@@ -39,10 +38,10 @@ DEPEND="${RDEPEND}
 S="${WORKDIR}"
 
 PATCHES=(
-	"${FILESDIR}"/gcc7-snprintf.patch
-	"${FILESDIR}"/openssl.patch
+	"${FILESDIR}"/${P}-gcc7-snprintf.patch
+	"${FILESDIR}"/${P}-openssl.patch
 	"${FILESDIR}"/${P}-Makefile.patch
-	"${FILESDIR}"/f2fs-tools-1.10.patch
+	"${FILESDIR}"/${P}-f2fs-tools-1.10.patch
 )
 
 src_unpack() {
@@ -62,12 +61,15 @@ src_install() {
 	doexe "${WORKDIR}"/system/core/fastboot/fastboot
 	dodoc "${WORKDIR}"/system/core/adb/NOTICE "${WORKDIR}"/system/core/adb/{OVERVIEW,SERVICES,SYNC}.TXT
 	# udev rules
-	udev_dorules "${DISTDIR}/${android_udev_rules_commit}-51-android.rules"
+	udev_dorules "${DISTDIR}/51-android.rules"
+	# openrc init.d
+	newinitd "${FILESDIR}/adb.initd" adb
 	# systemd unit file
 	systemd_dounit "${FILESDIR}"/adb.service
 }
 
 pkg_postinst() {
+	udev_reload
 	elog "Android Debug Bridge (adb) is a command-line tool used to communicate with and control"
 	elog "Android device over a USB link from a computer. Fastboot is a command line tool used"
 	elog "to directly flash the filesystem in Android devices from a host via USB."

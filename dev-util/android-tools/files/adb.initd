@@ -1,0 +1,24 @@
+#!/sbin/openrc-run
+# Copyright 1999-2018 The Bentoo Authors. All rights reserved
+# Distributed under the terms of the GNU General Public License v3 or later
+
+extra_started_commands="reload"
+
+start(){
+	ebegin "Starting ${SVCNAME}: "
+		start-stop-daemon --start --quiet --exec /usr/bin/adb start-server
+	eend $?
+}
+
+stop(){
+	ebegin "Stopping ${SVCNAME}: "
+		start-stop-daemon --start --quiet --exec /usr/bin/adb kill-server
+	eend $?
+}
+
+reload() {
+	ebegin "Reloading ${SVCNAME}: "
+		stop
+		start
+	eend
+}
