@@ -9,10 +9,9 @@ HOMEPAGE="https://bitbucket.org/redeyeteam/bentoo"
 LICENSE="metapackage"
 SLOT="0"
 KEYWORDS="amd64 arm x86"
-IUSE="libreoffice +pelican virtualbox +vmware"
+IUSE="libreoffice +pelican +thinkpad virtualbox +vmware"
 
 PDEPEND="
-	app-laptop/tp_smapi
 	bentoo/bentoo
 	dev-util/meld
 	games-engines/openmw
@@ -24,7 +23,9 @@ PDEPEND="
 	net-irc/irssi
 	pelican? ( app-text/pelican[markdown] =dev-python/beautifulsoup-4* )
 	sys-block/gparted
-	sys-firmware/iwl6005-ucode
+	thinkpad? ( app-laptop/hdapsd )
+	thinkpad? ( app-laptop/tp_smapi )
+	thinkpad? ( sys-firmware/iwl6005-ucode )
 	sys-kernel/buildkernel
 	virtualbox? ( app-emulation/virtualbox-bin )
 	vmware? ( app-emulation/vmware-player )
