@@ -42,6 +42,7 @@ PATCHES=(
 	"${FILESDIR}"/gcc7-snprintf.patch
 	"${FILESDIR}"/openssl.patch
 	"${FILESDIR}"/${P}-Makefile.patch
+	"${FILESDIR}"/f2fs-tools-1.10.patch
 )
 
 src_unpack() {
