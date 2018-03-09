@@ -25,6 +25,7 @@ IUSE="doc test"
 RDEPEND="
 	${PYTHON_DEPS}
 	dev-libs/gmp:0=
+	dev-libs/mpfr:=
 	>=dev-libs/libpcre-8.32
 "
 
