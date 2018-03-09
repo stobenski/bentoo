@@ -22,7 +22,7 @@ done
 DEPEND=""
 RDEPEND="${DEPEND}
 
-	( || ( app-editors/vim app-editors/neovim ) )
+	app-editors/vim
 	app-vim/pathogen
 	app-vim/syntastic
 	gtk? ( app-editors/gvim )
