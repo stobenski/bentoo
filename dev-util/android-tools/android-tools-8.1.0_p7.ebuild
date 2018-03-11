@@ -5,7 +5,7 @@ EAPI="6"
 
 PYTHON_COMPAT=( python2_7 python3_{4,5,6} )
 
-inherit bash-completion-r1 python-r1 python-utils-r1 systemd udev
+inherit bash-completion-r1 python-r1 python-utils-r1 systemd udev user
 
 MY_PV="${PV/_p/_r}"
 MY_P=${PN}-${MY_PV}
@@ -23,7 +23,7 @@ https://android.googlesource.com/platform/system/extras/+archive/android-${MY_PV
 https://github.com/M0Rf30/android-udev-rules/raw/${android_udev_rules_commit}/51-android.rules -> 51-android-${android_udev_rules_commit}.rules"
 
 # The entire source code is Apache-2.0, except for fastboot which is BSD-2.
-LICENSE="Apache-2.0 BSD-2"
+LICENSE="Apache-2.0 BSD-2 GPL-3"
 SLOT="0"
 KEYWORDS="~amd64 ~arm ~x86 ~arm-linux ~x86-linux"
 IUSE="python"
@@ -72,10 +72,22 @@ src_install() {
 	systemd_dounit "${FILESDIR}"/adb.service
 }
 
+pkg_setup() {
+	enewgroup adbusers
+}
+
 pkg_postinst() {
 	udev_reload
-	elog "Android Debug Bridge (adb) is a command-line tool used to communicate with and control"
-	elog "Android device over a USB link from a computer. Fastboot is a command line tool used"
-	elog "to directly flash the filesystem in Android devices from a host via USB."
-	elog
+	einfo "To be able to use android devices,"
+	einfo "add yourself to the 'adbusers' group by calling"
+	einfo "  usermod -a -G adbusers <user>"
+	einfo
+	einfo "Android Debug Bridge (adb) is a command-line tool used to communicate with"
+	einfo "and control Android device over a USB link from a computer."
+	einfo
+	einfo "Fastboot is a command line tool used"
+	einfo "to directly flash the filesystem in Android devices from a host via USB."
+	einfo
+	einfo "mkbootimg creates Android boot images that includes kernel image and ramdisk,"
+	einfo "in a special format which can be used with fastboot."
 }
