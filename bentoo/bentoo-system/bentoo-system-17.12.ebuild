@@ -66,6 +66,7 @@ PDEPEND="${PDEPEND}
 	app-misc/tmux
 	app-shells/bash-completion
 	app-text/tree
+	bentoo/bentoo-bash
 	bentoo/bentoo-build
 	bentoo/bentoo-devel
 	bentoo/bentoo-version
