@@ -1,0 +1,193 @@
+# ==================================
+# Notes from bootstraping Python 3.6
+# ==================================
+#
+# New Python major version (3.X) break ABI and bytecode compatibility,
+# so all packages depending on it need to be rebuilt.
+#
+# Due to a dependency cycle between Python, gdb, rpm, pip, setuptools, wheel,
+# and other packages, this isn't straightforward.
+# Build in the following order:
+#
+# 1. At the same time:
+#     - gdb without python support (add %%global _without_python 1 on top of
+#       gdb's SPEC file)
+#     - python-rpm-generators with bootstrapping_python set to 1
+#       (this can be done also during step 2., but should be done before 3.)
+# 2. python3 without rewheel (use %%bcond_with rewheel instead of
+#     %%bcond_without)
+# 3. At the same time:
+#     - gdb with python support (remove %%global _without_python 1 on top of
+#       gdb's SPEC file)
+#     - python-rpm-generators with bootstrapping_python set to 0
+#       (this can be done at any later step without negative effects)
+# 4. rpm
+# 5. python-setuptools with bootstrap set to 1
+# 6. python-pip with build_wheel set to 0
+# 7. python-wheel with %%bcond_without bootstrap
+# 8. python-setuptools with bootstrap set to 0 and also with_check set to 0
+# 9. python-pip with build_wheel set to 1
+# 10. pyparsing
+# 11. python3 with rewheel
+#
+# Then the most important packages have to be built, in dependency order.
+# These were:
+#   python-sphinx, pytest, python-requests, cloud-init, dnf, anaconda, abrt
+#
+# After these have been built, a targeted rebuild should be done for the rest.
+
+# 00001 #
+# Fixup distutils/unixccompiler.py to remove standard library path from rpath:
+# Was Patch0 in ivazquez' python3000 specfile:
+00001-rpath.patch
+
+# 00102 #
+# Change the various install paths to use /usr/lib64/ instead or /usr/lib
+# Only used when "%%{_lib}" == "lib64"
+# Not yet sent upstream.
+#00102-lib64.patch
+
+# 00111 #
+# Patch the Makefile.pre.in so that the generated Makefile doesn't try to build
+# a libpythonMAJOR.MINOR.a
+# See https://bugzilla.redhat.com/show_bug.cgi?id=556092
+# Downstream only: not appropriate for upstream
+#00111-no-static-lib.patch
+
+# 00132 #
+# Add non-standard hooks to unittest for use in the "check" phase below, when
+# running selftests within the build:
+#   @unittest._skipInRpmBuild(reason)
+# for tests that hang or fail intermittently within the build environment, and:
+#   @unittest._expectedFailureInRpmBuild
+# for tests that always fail within the build environment
+#
+# The hooks only take effect if WITHIN_PYTHON_RPM_BUILD is set in the
+# environment, which we set manually in the appropriate portion of the "check"
+# phase below (and which potentially other python-* rpms could set, to reuse
+# these unittest hooks in their own "check" phases)
+00132-add-rpmbuild-hooks-to-unittest.patch
+
+# 00155 #
+# Avoid allocating thunks in ctypes unless absolutely necessary, to avoid
+# generating SELinux denials on "import ctypes" and "import uuid" when
+# embedding Python within httpd
+# See https://bugzilla.redhat.com/show_bug.cgi?id=814391
+00155-avoid-ctypes-thunks.patch
+
+# 00160 #
+# Python 3.3 added os.SEEK_DATA and os.SEEK_HOLE, which may be present in the
+# header files in the build chroot, but may not be supported in the running
+# kernel, hence we disable this test in an rpm build.
+# Adding these was upstream issue http://bugs.python.org/issue10142
+# Not yet sent upstream
+00160-disable-test_fs_holes-in-rpm-build.patch
+
+# 00163 #
+# Some tests within test_socket fail intermittently when run inside Koji;
+# disable them using unittest._skipInRpmBuild
+# Not yet sent upstream
+00163-disable-parts-of-test_socket-in-rpm-build.patch
+
+# 00170 #
+# In debug builds, try to print repr() when a C-level assert fails in the
+# garbage collector (typically indicating a reference-counting error
+# somewhere else e.g in an extension module)
+# The new macros/functions within gcmodule.c are hidden to avoid exposing
+# them within the extension API.
+# Sent upstream: http://bugs.python.org/issue9263
+# See https://bugzilla.redhat.com/show_bug.cgi?id=614680
+00170-gc-assertions.patch
+
+# 00178 #
+# Don't duplicate various FLAGS in sysconfig values
+# http://bugs.python.org/issue17679
+# Does not affect python2 AFAICS (different sysconfig values initialization)
+00178-dont-duplicate-flags-in-sysconfig.patch
+
+# 00189 #
+# Add the rewheel module, allowing to recreate wheels from already installed
+# ones
+# https://github.com/bkabrda/rewheel
+00189-add-rewheel-module.patch
+
+# 00205 #
+# LIBPL variable in makefile takes LIBPL from configure.ac
+# but the LIBPL variable defined there doesn't respect libdir macro
+00205-make-libpl-respect-lib64.patch
+
+# 00251
+# Set values of prefix and exec_prefix in distutils install command
+# to /usr/local if executable is /usr/bin/python* and RPM build
+# is not detected to make pip and distutils install into separate location
+# Fedora Change: https://fedoraproject.org/wiki/Changes/Making_sudo_pip_safe
+00251-change-user-install-location.patch
+
+# 00262 #
+# Backport of PEP 538: Coercing the legacy C locale to a UTF-8 based locale
+# https://www.python.org/dev/peps/pep-0538/
+# Fedora Change: https://fedoraproject.org/wiki/Changes/python3_c.utf-8_locale
+# Original proposal: https://bugzilla.redhat.com/show_bug.cgi?id=1404918
+00262-pep538_coerce_legacy_c_locale.patch
+
+# 00264 #
+# test_pass_by_value was added in Python 3.6.1 and on aarch64
+# it is catching an error that was there, but wasn't tested before.
+# Therefore skipping the test on aarch64 until fixed upstream.
+# Reported upstream: http://bugs.python.org/issue29804
+00264-skip-test-failing-on-aarch64.patch
+
+# 00273 #
+# Fix localeconv() encoding for LC_NUMERIC
+# Fixed upstream: https://bugs.python.org/issue31900
+00273-fix-localeconv-encoding-for-LC_NUMERIC.patch
+
+# 00274 #
+# Upstream uses Debian-style architecture naming. Change to match Fedora.
+00274-fix-arch-names.patch
+
+# 00289 #
+# Fix the compilation of the nis module, as glibc removed the
+# interfaces related to Sun RPC and they are now provided
+# by libtirpc and libnsl2.
+# See: https://fedoraproject.org/wiki/Changes/SunRPCRemoval
+# and https://fedoraproject.org/wiki/Changes/NISIPv6
+# Fixed upstream: https://bugs.python.org/issue32521
+#00289-fix-nis-compilation.patch
+
+# 00290 #
+# Not every target system may provide a crypt() function in its stdlibc
+# and may use an external or replacement library, like libxcrypt, for
+# providing such functions.
+# Fixed upstream: https://bugs.python.org/issue32635
+00290-cryptmodule-Include-crypt.h-for-declaration-of-crypt.patch
+
+# 00291 #
+# Build fails with undefined references to dlopen / dlsym otherwise.
+# See: https://bugzilla.redhat.com/show_bug.cgi?id=1537489
+# and: https://src.fedoraproject.org/rpms/redhat-rpm-config/c/078af19
+00291-setup-Link-ctypes-against-dl-explicitly.patch
+
+# 00292 #
+# Restore the public PyExc_RecursionErrorInst symbol that was removed
+# from the 3.6.4 release upstream.
+# Reported upstream: https://bugs.python.org/issue30697
+00292-restore-PyExc_RecursionErrorInst-symbol.patch
+
+# 00294 #
+# Define TLS cipher suite on build time depending
+# on the OpenSSL default cipher suite selection.
+# Fixed upstream on CPython's 3.7 branch:
+# https://bugs.python.org/issue31429
+# See also: https://bugzilla.redhat.com/show_bug.cgi?id=1489816
+
+00294-define-TLS-cipher-suite-on-build-time.patch
+
+# (New patches go here ^^^)
+#
+# When adding new patches to "python" and "python3" in Fedora, EL, etc.,
+# please try to keep the patch numbers in-sync between all specfiles.
+#
+# More information, and a patch number catalog, is at:
+#
+#     https://fedoraproject.org/wiki/SIGs/Python/PythonPatches
