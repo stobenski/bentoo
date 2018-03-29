@@ -49,78 +49,114 @@ diff -Naur a/system/core/libcrypto_utils/android_pubkey.c b/system/core/libcrypt
 diff -Naur a/system/core/libcrypto_utils/openssl_compability.h b/system/core/libcrypto_utils/openssl_compability.h
 --- a/system/core/libcrypto_utils/openssl_compability.h  1970-01-01 05:00:00.000000000 +0500
 +++ b/system/core/libcrypto_utils/openssl_compability.h  2017-01-04 22:19:02.912121861 +0500
-@@ -0,0 +0,74 @@
+@@ -0,0 +0,36 @@
 +#include <string.h>
 +
 +#include <openssl/bn.h>
 +
-+static inline void *OPENSSL_memset(void *dst, int c, size_t n) {
-+  if (n == 0) {
-+    return dst;
++static int fits_in_bytes(const uint8_t *bytes, size_t num_bytes, size_t len) {
++  uint8_t mask = 0;
++  for (size_t i = len; i < num_bytes; i++) {
++    mask |= bytes[i];
 +  }
-+
-+  return memset(dst, c, n);
-+}
-+
-+// constant_time_select_ulong returns |x| if |v| is 1 and |y| if |v| is 0. Its
-+// behavior is undefined if |v| takes any other value.
-+static BN_ULONG constant_time_select_ulong(int v, BN_ULONG x, BN_ULONG y) {
-+  BN_ULONG mask = v;
-+  mask--;
-+
-+  return (~mask & x) | (mask & y);
-+}
-+
-+// constant_time_le_size_t returns 1 if |x| <= |y| and 0 otherwise. |x| and |y|
-+// must not have their MSBs set.
-+static int constant_time_le_size_t(size_t x, size_t y) {
-+  return ((x - y - 1) >> (sizeof(size_t) * 8 - 1)) & 1;
-+}
-+
-+// read_word_padded returns the |i|'th word of |in|, if it is not out of
-+// bounds. Otherwise, it returns 0. It does so without branches on the size of
-+// |in|, however it necessarily does not have the same memory access pattern. If
-+// the access would be out of bounds, it reads the last word of |in|. |in| must
-+// not be zero.
-+static BN_ULONG read_word_padded(const BIGNUM *in, size_t i) {
-+  // Read |in->d[i]| if valid. Otherwise, read the last word.
-+  BN_ULONG l = in->d[constant_time_select_ulong(
-+      constant_time_le_size_t(in->dmax, i), in->dmax - 1, i)];
-+
-+  // Clamp to zero if above |d->top|.
-+  return constant_time_select_ulong(constant_time_le_size_t(in->top, i), 0, l);
++  return mask == 0;
 +}
 +
 +int BN_bn2bin_padded(uint8_t *out, size_t len, const BIGNUM *in) {
-+  // Special case for |in| = 0. Just branch as the probability is negligible.
-+  if (BN_is_zero(in)) {
-+    OPENSSL_memset(out, 0, len);
-+    return 1;
-+  }
-+
-+  // Check if the integer is too big. This case can exit early in non-constant
-+  // time.
-+  if ((size_t)in->top > (len + (BN_BYTES - 1)) / BN_BYTES) {
-+    return 0;
-+  }
-+  if ((len % BN_BYTES) != 0) {
-+    BN_ULONG l = read_word_padded(in, len / BN_BYTES);
-+    if (l >> (8 * (len % BN_BYTES)) != 0) {
++#if OPENSSL_VERSION_NUMBER < 0x10100000L
++  const uint8_t *bytes = (const uint8_t *)in->d;
++  size_t num_bytes = in->width * BN_BYTES;
++  if (len < num_bytes) {
++    if (!fits_in_bytes(bytes, num_bytes, len)) {
 +      return 0;
 +    }
++    num_bytes = len;
 +  }
-+
-+  // Write the bytes out one by one. Serialization is done without branching on
-+  // the bits of |in| or on |in->top|, but if the routine would otherwise read
-+  // out of bounds, the memory access pattern can't be fixed. However, for an
-+  // RSA key of size a multiple of the word size, the probability of BN_BYTES
-+  // leading zero octets is low.
-+  //
-+  // See Falko Stenzke, "Manger's Attack revisited", ICICS 2010.
-+  size_t i = len;
-+  while (i--) {
-+    BN_ULONG l = read_word_padded(in, i / BN_BYTES);
-+    *(out++) = (uint8_t)(l >> (8 * (i % BN_BYTES))) & 0xff;
++  // We only support little-endian platforms, so we can simply write the buffer
++  // in reverse.
++  for (size_t i = 0; i < num_bytes; i++) {
++    out[len - i - 1] = bytes[i];
 +  }
++  // Pad out the rest of the buffer with zeroes.
++  memset(out, 0, len - num_bytes);
++#else
++  int res = BN_bn2binpad(in, out, len);
++  if (res == -1)
++    return 0;
++#endif
 +  return 1;
 +}
+
+Patch for openssl-1.1
+
+diff -Naur a/system/core/libcrypto_utils/android_pubkey.c b/system/core/libcrypto_utils/android_pubkey.c
+--- a/system/core/libcrypto_utils/android_pubkey.c	1970-01-01 05:00:00.000000000 +0500
++++ b/system/core/libcrypto_utils/android_pubkey.c	2018-03-04 22:19:02.913121849 +0500
+@@ -82,12 +82,25 @@
+   memcpy(modulus_buffer, key_struct->modulus, sizeof(modulus_buffer));
+   reverse_bytes(modulus_buffer, sizeof(modulus_buffer));
++#if OPENSSL_VERSION_NUMBER < 0x10100000L
+   new_key->n = BN_bin2bn(modulus_buffer, sizeof(modulus_buffer), NULL);
+   if (!new_key->n) {
++#else
++  BIGNUM *n, *e;
++  n = BN_bin2bn(modulus_buffer, sizeof(modulus_buffer), NULL);
++  RSA_set0_key(new_key, n, NULL, NULL);
++  if (n!=0) {
++#endif
+     goto cleanup;
+   }
+ 
+   // Read the exponent.
++#if OPENSSL_VERSION_NUMBER < 0x10100000L
+   new_key->e = BN_new();
+   if (!new_key->e || !BN_set_word(new_key->e, key_struct->exponent)) {
++#else
++  e = BN_new();
++  RSA_set0_key(new_key, NULL, e, NULL);
++  if (e!=0 || !BN_set_word(e, key_struct->exponent)) {
++#endif
+     goto cleanup;
+   }
+@@ -139,5 +139,13 @@
++#if OPENSSL_VERSION_NUMBER >= 0x10100000L
++  const BIGNUM *n, *e;
++  RSA_get0_key(key, &n, NULL, NULL);
++#endif
+   if (!ctx || !r32 || !n0inv || !BN_set_bit(r32, 32) ||
++#if OPENSSL_VERSION_NUMBER < 0x10100000L
+       !BN_mod(n0inv, key->n, r32, ctx) ||
++#else
++      !BN_mod(n0inv, n, r32, ctx) ||
++#endif
+       !BN_mod_inverse(n0inv, n0inv, r32, ctx) || !BN_sub(n0inv, r32, n0inv)) {
+     goto cleanup;
+   }
+@@ -146,14 +146,27 @@
+   // Store the modulus.
++#if OPENSSL_VERSION_NUMBER < 0x10100000L
+   if (!android_pubkey_encode_bignum(key->n, key_struct->modulus)) {
++#else
++  if (!android_pubkey_encode_bignum(n, key_struct->modulus)) {
++#endif
+     goto cleanup;
+   }
+ 
+   // Compute and store rr = (2^(rsa_size)) ^ 2 mod N.
+   if (!ctx || !rr || !BN_set_bit(rr, ANDROID_PUBKEY_MODULUS_SIZE * 8) ||
++#if OPENSSL_VERSION_NUMBER < 0x10100000L
+       !BN_mod_sqr(rr, rr, key->n, ctx) ||
++#else
++      !BN_mod_sqr(rr, rr, n, ctx) ||
++#endif
+       !android_pubkey_encode_bignum(rr, key_struct->rr)) {
+     goto cleanup;
+   }
+ 
+   // Store the exponent.
++#if OPENSSL_VERSION_NUMBER < 0x10100000L
+   key_struct->exponent = (uint32_t)BN_get_word(key->e);
++#else
++  RSA_get0_key(key, NULL, &e, NULL);
++  key_struct->exponent = (uint32_t)BN_get_word(e);
++#endif
