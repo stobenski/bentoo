@@ -65,7 +65,7 @@ diff -Naur a/system/core/libcrypto_utils/openssl_compability.h b/system/core/lib
 +int BN_bn2bin_padded(uint8_t *out, size_t len, const BIGNUM *in) {
 +#if OPENSSL_VERSION_NUMBER < 0x10100000L
 +  const uint8_t *bytes = (const uint8_t *)in->d;
-+  size_t num_bytes = in->width * BN_BYTES;
++  size_t num_bytes = in->top * BN_BYTES;
 +  if (len < num_bytes) {
 +    if (!fits_in_bytes(bytes, num_bytes, len)) {
 +      return 0;
