@@ -10,10 +10,10 @@ LICENSE="metapackage"
 SLOT="0"
 KEYWORDS="amd64 arm x86"
 
-IUSE="addons bluetooth drkonqi filelight git kamera kget kgpg kdialog kdeconnect\
- kdepim kmix kpat krusader ksystemlog kwalletmanager kwalletpam networkmanager\
- okular redshift telepathy touchpad wallpapers khelpcenter vault plymouth pulseaudio\
- qbittorrent"
+IUSE="addons bluetooth clementine drkonqi filelight git kamera kget kgpg kdialog\
+ kdeconnect kdepim kmix kpat krusader ksystemlog kwalletmanager kwalletpam\
+ networkmanager okular redshift telepathy touchpad wallpapers khelpcenter vault\
+ plymouth pulseaudio qbittorrent"
 
 KLV="17.12.50"
 
@@ -60,6 +60,7 @@ RDEPEND="${DEPEND}
 
 	addons? ( <kde-plasma/kdeplasma-addons-${KLV} )
 	bluetooth? ( <kde-plasma/bluedevil-${KLV} )
+	clementine? ( media-sound/clementine )
 	drkonqi? ( <kde-plasma/drkonqi-${KLV} )
 	filelight? ( <kde-apps/filelight-${KLV} )
 	git? ( dev-vcs/git-cola )
@@ -87,6 +88,9 @@ RDEPEND="${DEPEND}
 	wallpapers? ( <kde-plasma/plasma-workspace-wallpapers-${KLV} )
 
 	|| ( www-client/qupzilla www-client/falkon )
+
+	kde-plasma/sierrabreeze
+	x11-themes/la-capitaine-icon-theme
 "
 
 PDEPEND=""
