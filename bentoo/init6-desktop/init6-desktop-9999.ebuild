@@ -16,16 +16,15 @@ PDEPEND="
 	dev-util/meld
 	games-engines/openmw
 	games-sports/torcs
+	games-strategy/warzone2100
 	libreoffice? ( app-office/libreoffice )
+	media-gfx/blender
 	media-gfx/gimp
 	media-video/mpv
-	net-im/bitlbee
-	net-irc/irssi
+	( net-im/bitlbee net-irc/irssi )
 	pelican? ( app-text/pelican[markdown] =dev-python/beautifulsoup-4* )
 	sys-block/gparted
-	thinkpad? ( app-laptop/hdapsd )
-	thinkpad? ( app-laptop/tp_smapi )
-	thinkpad? ( sys-firmware/iwl6005-ucode )
+	thinkpad? ( app-laptop/hdapsd app-laptop/tp_smapi sys-firmware/iwl6005-ucode )
 	sys-kernel/buildkernel
 	virtualbox? ( app-emulation/virtualbox-bin )
 	vmware? ( app-emulation/vmware-player )
