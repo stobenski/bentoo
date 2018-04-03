@@ -16,6 +16,4 @@ DEPEND=""
 RDEPEND="${DEPEND}
 	net-proxy/privoxy
 	net-vpn/tor
-	net-dns/dnscrypt-proxy
-	net-dns/unbound
 	"
