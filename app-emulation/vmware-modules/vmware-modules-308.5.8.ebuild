@@ -115,7 +115,7 @@ src_prepare() {
 	kernel_is ge 4 14 0 && epatch "${FILESDIR}/${PV_MAJOR}-4.14-00-vmmon-global-page-state.patch"
 	kernel_is ge 4 14 0 && epatch "${FILESDIR}/${PV_MAJOR}-4.14-01-deprecated-asm-uaccess.patch"
 	kernel_is ge 4 15 0 && epatch "${FILESDIR}/${PV_MAJOR}-4.15-00-init_timer.patch"
-#	kernel_is ge 4 15 5 && epatch "${FILESDIR}/${PV_MAJOR}-4.15-05-vmblock-convert-to-new-i_version-API.patch"
+	kernel_is ge 4 16 0 && epatch "${FILESDIR}/${PV_MAJOR}-4.15-05-vmblock-convert-to-new-i_version-API.patch"
 
 	# Allow user patches so they can support RC kernels and whatever else
 	epatch_user
