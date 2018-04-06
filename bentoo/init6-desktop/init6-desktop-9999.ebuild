@@ -15,8 +15,6 @@ PDEPEND="
 	bentoo/bentoo
 	dev-util/meld
 	games-engines/openmw
-	games-sports/torcs
-	games-strategy/warzone2100
 	libreoffice? ( app-office/libreoffice )
 	media-gfx/blender
 	media-gfx/gimp
