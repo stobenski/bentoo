@@ -1,12 +1,12 @@
 # Copyright 1999-2018 The Bentoo Authors. All rights reserved
 # Distributed under the terms of the GNU General Public License v3 or later
 
-# Based on https://dl.fedoraproject.org/pub/fedora/linux/development/rawhide/Everything/source/tree/Packages/p/python3-3.6.4-16.fc29.src.rpm
+# Based on https://dl.fedoraproject.org/pub/fedora/linux/development/rawhide/Everything/source/tree/Packages/p/python3-3.6.5-1.fc29.src.rpm
 
 EAPI="6"
 WANT_LIBTOOL="none"
 
-inherit autotools flag-o-matic pax-utils python-utils-r1 toolchain-funcs
+inherit autotools flag-o-matic pax-utils python-utils-r1 toolchain-funcs xdg-utils
 
 MY_P="Python-${PV}"
 PATCHSET_VERSION="3.6.4"
@@ -69,7 +69,7 @@ src_prepare() {
 	local PATCHES=(
 		"${WORKDIR}/patches"
 		"${FILESDIR}/${PN}-3.5-distutils-OO-build.patch"
-		"${FILESDIR}/3.6-disable-nis.patch"
+		"${FILESDIR}/3.6.5-disable-nis.patch"
 	)
 
 	default
@@ -319,6 +319,10 @@ src_install() {
 		ln -s "../../../bin/idle${PYVER}" \
 			"${D}${PYTHON_SCRIPTDIR}/idle" || die
 	fi
+
+	insinto /usr/share/appdata
+	doins "${FILESDIR}/${PV}"/idle3.appdata.xml
+	domenu "${FILESDIR}/${PV}"/idle3.desktop
 }
 
 pkg_preinst() {
@@ -345,8 +349,12 @@ pkg_postinst() {
 		ewarn
 		ewarn "Please adjust PYTHON_TARGETS (if so desired), and run emerge with the --newuse or --changed-use option to rebuild packages installing python modules."
 	fi
+
+	xdg_desktop_database_update
 }
 
 pkg_postrm() {
 	eselect_python_update
+
+	xdg_desktop_database_update
 }
