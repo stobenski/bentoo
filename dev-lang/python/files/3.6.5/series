@@ -163,3 +163,5 @@
 #
 #     https://fedoraproject.org/wiki/SIGs/Python/PythonPatches
 
+#Add support for openssl-1.1
+python-3.6.3-openssl-1.1.0.patch

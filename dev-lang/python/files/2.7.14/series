@@ -577,3 +577,6 @@ python-2.7.2-add-extension-suffix-to-python-config.patch
 #04000-modularity-disable-tk.patch
 
 05000-autotool-intermediates.patch
+
+#Add support for openssl-1.1
+python-2.7.14-openssl-1.1.0.patch
