@@ -3,7 +3,7 @@
 
 EAPI=6
 
-inherit cmake-utils readme.gentoo-r1 systemd
+inherit cmake-utils readme.gentoo-r1
 
 DESCRIPTION="The minimalist fan control program -- rewritten in clean C++11"
 HOMEPAGE="https://github.com/vmatare/thinkfan"
@@ -12,9 +12,10 @@ SRC_URI="https://github.com/vmatare/${PN}/archive/${PV}.tar.gz -> ${P}.tar.gz"
 LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS="amd64 x86"
-IUSE="atasmart"
+IUSE="atasmart yaml"
 
-DEPEND="atasmart? ( dev-libs/libatasmart )"
+DEPEND="atasmart? ( dev-libs/libatasmart )
+	yaml? ( dev-cpp/yaml-cpp )"
 RDEPEND="${DEPEND}"
 
 src_prepare() {

@@ -20,6 +20,7 @@ app-emulation/vmware-modules:vsock - Build the VMware VMCI transport for Virtual
 app-emulation/vmware-player:bundled-libs - Use precompiled bundled libraries instead of the system installation
 app-emulation/vmware-player:ovftool - Install OVF tool for importing and exporting appliance files
 app-emulation/vmware-player:vmware-tools - Install VMware Tools images
+app-laptop/thinkfan:atasmart - include libatasmart support to get disc temperature
 app-misc/mc:edit - Compile and install the mcedit application
 app-misc/mc:mclib - Compile and install the libmc.so shared library
 app-misc/mc:sftp - Add support for sftp (uses net-libs/libssh2 for it).
